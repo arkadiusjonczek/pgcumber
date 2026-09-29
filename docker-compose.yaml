@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:18.6-alpine3.24
+    container_name: postgres-dev
+    environment:
+      POSTGRES_DB: pgcumber
+      POSTGRES_USER: pgcumberuser
+      POSTGRES_PASSWORD: pgcumberpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U pgcumberuser -d pgcumber" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
