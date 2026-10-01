@@ -37,6 +37,7 @@ kos:
     main: ./cmd/pgcumber
     env:
       - FEATURES_PATH=/data/pgcumber/features
+    bare: true
     repositories:
      - docker.io/arkadiusjonczek/pgcumber
     tags:
