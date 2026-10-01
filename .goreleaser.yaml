@@ -33,13 +33,14 @@ builds:
 kos:
   - id: pgcumber-image
     build: pgcumber-build
+    bare: true
+    sbom: none
     working_dir: "."
     main: ./cmd/pgcumber
     env:
       - FEATURES_PATH=/data/pgcumber/features
-    bare: true
     repositories:
-     - docker.io/arkadiusjonczek/pgcumber
+     -  arkadiusjonczek/pgcumber
     tags:
       - latest
       - "{{ .Tag }}{{ if index .Env \"IMAGE_TAG_SUFFIX\" }}{{ .Env.IMAGE_TAG_SUFFIX }}{{ end }}"
