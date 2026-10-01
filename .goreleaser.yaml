@@ -38,7 +38,7 @@ kos:
     env:
       - FEATURES_PATH=/data/pgcumber/features
     repositories:
-     - arkadiusjonczek/pgcumber
+     - docker.io/arkadiusjonczek/pgcumber
     tags:
       - latest
       - "{{ .Tag }}{{ if index .Env \"IMAGE_TAG_SUFFIX\" }}{{ .Env.IMAGE_TAG_SUFFIX }}{{ end }}"
