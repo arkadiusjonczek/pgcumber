@@ -32,7 +32,7 @@ pgcumber features/pgcumber.feature
 Use go to build the `pgcumber` cli tool:
 
 ```shell
-go build -o pgcumber ./cmd/cli
+go build -o pgcumber ./cmd/pgcumber
 ```
 
 ## Test
