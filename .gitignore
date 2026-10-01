@@ -1,7 +1,6 @@
-.idea/
+/.idea/
 
-cli
-pgcumber
+/pgcumber
 
 # Added by goreleaser init:
-dist/
+/dist/
