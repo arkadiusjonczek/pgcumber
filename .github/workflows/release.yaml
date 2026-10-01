@@ -54,3 +54,5 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          KO_DOCKER_REPO: docker.io/${{ secrets.DOCKERHUB_USERNAME }}
