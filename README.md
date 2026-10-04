@@ -1,10 +1,10 @@
 # pgcumber
 
 ![Release Pipeline Status](https://img.shields.io/github/actions/workflow/status/arkadiusjonczek/pgcumber/release.yaml?style=flat-square "Release Pipeline Status")
-![Release Version](https://img.shields.io/github/v/release/arkadiusjonczek/pgcumber.svg?style=flat-square&color=green "Release Version")
-![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square "License")
-![Commit Activity](https://img.shields.io/github/commit-activity/m/arkadiusjonczek/pgcumber.svg?style=flat-square&color=green "Commit Activity")
-![Last Commit](https://img.shields.io/github/last-commit/arkadiusjonczek/pgcumber.svg?style=flat-square&color=green "Last Commit")
+![Release Version](https://img.shields.io/github/v/release/arkadiusjonczek/pgcumber.svg?style=flat-square&color=blue "Release Version")
+![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square&color=blue "License")
+![Commit Activity](https://img.shields.io/github/commit-activity/m/arkadiusjonczek/pgcumber.svg?style=flat-square&color=blue "Commit Activity")
+![Last Commit](https://img.shields.io/github/last-commit/arkadiusjonczek/pgcumber.svg?style=flat-square&color=blue "Last Commit")
 
 Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data.
 
