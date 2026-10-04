@@ -33,7 +33,7 @@ Use `pgcumber` and add the feature file or directory path as argument:
 pgcumber features/pgcumber.feature
 ```
 
-### Docker
+## Docker
 
 You can also use the Docker image from [Docker Hub](https://hub.docker.com/r/arkadiusjonczek/pgcumber) to run `pgcumber` as container:
 
