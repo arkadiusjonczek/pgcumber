@@ -35,7 +35,7 @@ func (psql *Postgresql) InitializeScenario(sc *godog.ScenarioContext) {
 	sc.Then(`^I am a database superuser$`, psql.iAmADatabaseSuperUser)
 	sc.Then(`^I am not a database superuser$`, psql.iAmNotADatabaseSuperUser)
 
-	sc.After(func(ctx context.Context, sc *godog.Scenario, err error) (context.Context, error) {
+	sc.After(func(ctx context.Context, _ *godog.Scenario, err error) (context.Context, error) {
 		if psql.conn != nil {
 			psqlerr := psql.conn.Close(ctx)
 			if psqlerr != nil {
