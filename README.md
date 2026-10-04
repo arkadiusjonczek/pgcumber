@@ -27,16 +27,10 @@ Feature: PostgreSQL
 
 ## Usage
 
-Use `pgcumber` and add the feature file path as argument:
+Use `pgcumber` and add the feature file or directory path as argument:
 
 ```shell
 pgcumber features/pgcumber.feature
-```
-
-Or add the feature files directory path as argument to run multiple tests:
-
-```shell
-pgcumber features
 ```
 
 ### Docker
