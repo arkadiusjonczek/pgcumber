@@ -1,6 +1,12 @@
 # pgcumber
 
-Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data. 
+Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data.
+
+![Release Pipeline Status](https://img.shields.io/github/actions/workflow/status/arkadiusjonczek/pgcumber/release.yaml?style=flat-square "Release Pipeline Status")
+![Release Version](https://img.shields.io/github/v/release/arkadiusjonczek/pgcumber.svg?style=flat-square&color=green "Release Version")
+![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square "License")
+![Commit Activity](https://img.shields.io/github/commit-activity/m/arkadiusjonczek/pgcumber.svg?style=flat-square "Commit Activity")
+![Last Commit](https://img.shields.io/github/last-commit/arkadiusjonczek/pgcumber.svg?style=flat-square&color=green "Last Commit")
 
 ```gherkin
 Feature: PostgreSQL
@@ -21,21 +27,32 @@ Feature: PostgreSQL
 
 ## Usage
 
-Use the cli tool `pgcumber` and add the feature file path oder the feature files directory path as argument:
+Use `pgcumber` and add the feature file path as argument:
 
 ```shell
 pgcumber features/pgcumber.feature
 ```
 
-## Build
-
-Use go to build the `pgcumber` cli tool:
+Or add the feature files directory path as argument to run multiple tests:
 
 ```shell
-go build -o pgcumber ./cmd/pgcumber
+pgcumber features
 ```
 
-## Test
+### Docker
+
+You can also use the Docker to run `pgcumber`:
+
+```shell
+docker run \
+  -it \
+  --rm \
+  -v "$(pwd)/features:/data/pgcumber/features" \
+  --network host \
+  arkadiusjonczek/pgcumber /data/pgcumber/features
+```
+
+## Docker Test Environment
 
 Use the docker compose file [docker-compose.yaml](docker-compose.yaml) to start PostgreSQL:
 
