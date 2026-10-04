@@ -1,12 +1,12 @@
 # pgcumber
 
-Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data.
-
 ![Release Pipeline Status](https://img.shields.io/github/actions/workflow/status/arkadiusjonczek/pgcumber/release.yaml?style=flat-square "Release Pipeline Status")
 ![Release Version](https://img.shields.io/github/v/release/arkadiusjonczek/pgcumber.svg?style=flat-square&color=green "Release Version")
 ![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square "License")
 ![Commit Activity](https://img.shields.io/github/commit-activity/m/arkadiusjonczek/pgcumber.svg?style=flat-square "Commit Activity")
 ![Last Commit](https://img.shields.io/github/last-commit/arkadiusjonczek/pgcumber.svg?style=flat-square&color=green "Last Commit")
+
+Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data.
 
 ```gherkin
 Feature: PostgreSQL
@@ -41,13 +41,14 @@ pgcumber features
 
 ### Docker
 
-You can also use the Docker to run `pgcumber`:
+You can also use the Docker to run `pgcumber` as container:
 
 ```shell
 docker run \
-  -it \
+  --interactive
+  --tty
   --rm \
-  -v "$(pwd)/features:/data/pgcumber/features" \
+  --volume "$(pwd)/features:/data/pgcumber/features" \
   --network host \
   arkadiusjonczek/pgcumber /data/pgcumber/features
 ```
