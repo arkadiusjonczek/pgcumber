@@ -1,10 +1,12 @@
 # pgcumber
 
-![Release Pipeline Status](https://img.shields.io/github/actions/workflow/status/arkadiusjonczek/pgcumber/release.yaml?style=flat-square "Release Pipeline Status")
-![Release Version](https://img.shields.io/github/v/release/arkadiusjonczek/pgcumber.svg?style=flat-square&color=blue "Release Version")
-![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square&color=blue "License")
-![Commit Activity](https://img.shields.io/github/commit-activity/m/arkadiusjonczek/pgcumber.svg?style=flat-square&color=blue "Commit Activity")
-![Last Commit](https://img.shields.io/github/last-commit/arkadiusjonczek/pgcumber.svg?style=flat-square&color=blue "Last Commit")
+[![Release Pipeline Status](https://img.shields.io/github/actions/workflow/status/arkadiusjonczek/pgcumber/release.yaml?style=flat-square "Release Pipeline Status")](https://github.com/arkadiusjonczek/pgcumber/actions/workflows/release.yaml)
+[![Release Version](https://img.shields.io/github/v/release/arkadiusjonczek/pgcumber.svg?style=flat-square&color=blue "Release Version")](https://github.com/arkadiusjonczek/pgcumber/releases)
+[![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square&color=blue "License")](https://github.com/arkadiusjonczek/pgcumber/blob/main/LICENSE)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/arkadiusjonczek/pgcumber.svg?style=flat-square&color=blue "Commit Activity")](https://github.com/arkadiusjonczek/pgcumber/commits/main/)
+[![Last Commit](https://img.shields.io/github/last-commit/arkadiusjonczek/pgcumber.svg?style=flat-square&color=blue "Last Commit")](https://github.com/arkadiusjonczek/pgcumber/commits/main/)
+[![Downloads](https://img.shields.io/github/downloads/arkadiusjonczek/pgcumber/total?style=flat-square&color=blue "Downloads")](https://github.com/arkadiusjonczek/pgcumber/releases)
+[![Docker Pulls](https://img.shields.io/docker/pulls/arkadiusjonczek/pgcumber?style=flat-square&color=blue "Docker Pulls")](https://hub.docker.com/r/arkadiusjonczek/pgcumber)
 
 Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data.
 
