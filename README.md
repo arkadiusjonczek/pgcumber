@@ -35,7 +35,7 @@ pgcumber features/pgcumber.feature
 
 ### Docker
 
-You can also use the Docker to run `pgcumber` as container:
+You can also use the Docker image from [Docker Hub](https://hub.docker.com/r/arkadiusjonczek/pgcumber) to run `pgcumber` as container:
 
 ```shell
 docker run \
