@@ -58,6 +58,17 @@ archives:
       - goos: windows
         formats: [zip]
 
+brews:
+  - name: pgcumber
+    repository:
+      owner: arkadiusjonczek
+      name: homebrew-pgcumber
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    directory: Formula
+    homepage: "https://github.com/arkadiusjonczek/pgcumber"
+    description: "Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data."
+    license: "MIT"
+
 changelog:
   sort: asc
   filters:
