@@ -21,8 +21,14 @@ jobs:
           go-version: 'stable'
           cache: true
 
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: latest
+          args: --timeout=5m
+
       - name: Install dependencies
         run: go mod download
-        
+
       - name: Run Tests
         run: go test -v ./...
