@@ -32,8 +32,8 @@ Feature: PostgreSQL user permissions
     And   The port "5432"
     And   The database "pgcumber"
 
-    When  I use username "nonadmin"
-    And   I use password "nonadmin"
+    When  I use username "johndoe"
+    And   I use password "johndoe"
     And   I connect to the server
 
     Then  the connection is successful
