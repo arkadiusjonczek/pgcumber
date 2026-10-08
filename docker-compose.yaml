@@ -4,14 +4,15 @@ services:
     container_name: postgres-dev
     environment:
       POSTGRES_DB: pgcumber
-      POSTGRES_USER: pgcumberuser
-      POSTGRES_PASSWORD: pgcumberpassword
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
+      - ./docker/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U pgcumberuser -d pgcumber" ]
+      test: [ "CMD-SHELL", "pg_isready -U admin -d pgcumber" ]
       interval: 10s
       timeout: 5s
       retries: 5
