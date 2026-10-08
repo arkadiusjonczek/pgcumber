@@ -26,7 +26,7 @@ Feature: PostgreSQL user permissions
     Then  the connection is successful
     And   I am a database superuser
 
-  Scenario: The user nonadmin is not a superuser on the pgcumber database
+  Scenario: The user johndoe is not a superuser on the pgcumber database
 
     Given The host "localhost"
     And   The port "5432"
