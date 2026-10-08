@@ -11,20 +11,33 @@
 Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data.
 
 ```gherkin
-Feature: PostgreSQL
+Feature: PostgreSQL user permissions
 
-  Scenario: PostgreSQL connection & user
+  Scenario: The user admin is a superuser on the pgcumber database
 
     Given The host "localhost"
     And   The port "5432"
     And   The database "pgcumber"
 
-    When I use username "pgcumberuser"
-    And  I use password "pgcumberpassword"
-    And  I connect to the server
+    When  I use username "admin"
+    And   I use password "admin"
+    And   I connect to the server
 
-    Then the connection is successful
-    And  I am a database superuser
+    Then  the connection is successful
+    And   I am a database superuser
+
+  Scenario: The user nonadmin is not a superuser on the pgcumber database
+
+    Given The host "localhost"
+    And   The port "5432"
+    And   The database "pgcumber"
+
+    When  I use username "nonadmin"
+    And   I use password "nonadmin"
+    And   I connect to the server
+
+    Then  the connection is successful
+    And   I am not a database superuser
 ```
 
 ## Usage
