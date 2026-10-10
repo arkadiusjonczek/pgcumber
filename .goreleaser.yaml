@@ -69,6 +69,18 @@ brews:
     description: "Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data."
     license: "MIT"
 
+homebrew_casks:
+  - name: "{{ .ProjectName }}"
+    homepage: "https://github.com/arkadiusjonczek/pgcumber"
+    description: "Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data."
+    repository:
+      owner: arkadiusjonczek
+      name: homebrew-pgcumber
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    gooss:
+      - darwin
+      - linux
+
 changelog:
   sort: asc
   filters:
