@@ -1,11 +1,3 @@
-# This is an example .goreleaser.yml file with some sensible defaults.
-# Make sure to check the documentation at https://goreleaser.com
-
-# The lines below are called `modelines`. See `:help modeline`
-# Feel free to remove those if you don't want/need to use them.
-# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
-# vim: set ts=2 sw=2 tw=0 fo=cnqoj
-
 version: 2
 
 report_sizes: true
@@ -30,7 +22,10 @@ builds:
       - amd64
       - "386"
     ldflags:
-      - -s -w
+      - -s -w # Strip Symbol Table and Disable DWARF Generation for smaller binaries (default in goreleaser)
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
 
 kos:
   - id: pgcumber-image

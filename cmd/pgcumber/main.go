@@ -8,8 +8,10 @@ import (
 	"github.com/arkadiusjonczek/pgcumber/internal/app/pgcumber"
 )
 
-const (
-	FeaturesPathEnvVar = "FEATURES_PATH"
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
 )
 
 func main() {
@@ -20,18 +22,13 @@ func main() {
 }
 
 func run() error {
-	// goreleaser sets the features path
-	// in the docker image this way
-	if os.Getenv(FeaturesPathEnvVar) != "" {
-		if len(os.Args) < 2 {
-			os.Args = append(os.Args, os.Getenv(FeaturesPathEnvVar))
-		} else {
-			os.Args[1] = os.Getenv(FeaturesPathEnvVar)
-		}
-	}
-
 	if len(os.Args) < 2 {
 		return fmt.Errorf("usage: pgcumber <path to features file or directory>")
+	}
+
+	if os.Args[1] == "--version" {
+		fmt.Printf("pgcumber %s (Commit: %s, Date: %s)\n", version, commit, date)
+		return nil
 	}
 
 	featuresPath := os.Args[1]
