@@ -77,9 +77,6 @@ homebrew_casks:
       owner: arkadiusjonczek
       name: homebrew-pgcumber
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    gooss:
-      - darwin
-      - linux
 
 changelog:
   sort: asc
