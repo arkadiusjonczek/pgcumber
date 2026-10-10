@@ -23,7 +23,7 @@ func main() {
 
 func run() error {
 	if len(os.Args) < 2 {
-		return fmt.Errorf("usage: pgcumber <path to features file or directory> or --version")
+		return fmt.Errorf("usage: pgcumber <path to features file or directory>")
 	}
 
 	if os.Args[1] == "--version" {
