@@ -48,6 +48,14 @@ Use `pgcumber` and add the feature file or directory path as argument:
 pgcumber features/pgcumber.feature
 ```
 
+### macOS
+
+If you are on macOS and you download the binary in e.g. the web browser you might remove the assigned quarantine attribute:
+
+```shell
+xattr -d com.apple.quarantine pgcumber
+```
+
 ## Docker
 
 You can also use the Docker image from [Docker Hub](https://hub.docker.com/r/arkadiusjonczek/pgcumber) to run `pgcumber` as container:
