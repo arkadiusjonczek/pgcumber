@@ -40,6 +40,22 @@ Feature: PostgreSQL user permissions
     And   I am not a database superuser
 ```
 
+## Install
+
+Use [homebrew](https://brew.sh/) to install `pgcumber` on macOS or Linux.
+
+First add the tap to homebrew:
+
+```shell
+brew tap arkadiusjonczek/pgcumber
+```
+
+Then you can install the command:
+
+```shell
+brew install pgcumber
+```
+
 ## Usage
 
 Use `pgcumber` and add the feature file or directory path as argument:
