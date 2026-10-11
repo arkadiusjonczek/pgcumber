@@ -21,17 +21,17 @@ jobs:
       - name: Checkout latest tag
         if: github.event_name == 'workflow_dispatch'
         run: |
-          latest_tag=$(git describe --tags --abbrev=0)
+          latest_tag="$(git describe --tags --abbrev=0)"
           git checkout $latest_tag
 
       - name: Set Image Tag Suffix
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
             # Regulärer Release bekommt kein Suffix (bzw. ist leer)
-            echo "IMAGE_TAG_SUFFIX=" >> $GITHUB_ENV
+            echo "IMAGE_TAG_SUFFIX=" >> "$GITHUB_ENV"
           else
             # CVE-Patches bekommen das aktuelle Datum angehängt (z.B. -patch-20260912)
-            echo "IMAGE_TAG_SUFFIX=-patch-$(date +'%Y%m%d')" >> $GITHUB_ENV
+            echo "IMAGE_TAG_SUFFIX=-patch-$(date +'%Y%m%d')" >> "$GITHUB_ENV"
           fi
 
       - name: Set up Go
