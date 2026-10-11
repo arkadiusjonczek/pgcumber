@@ -22,7 +22,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: |
           latest_tag="$(git describe --tags --abbrev=0)"
-          git checkout $latest_tag
+          git checkout "$latest_tag"
 
       - name: Set Image Tag Suffix
         run: |
