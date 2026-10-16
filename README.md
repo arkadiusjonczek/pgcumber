@@ -78,8 +78,8 @@ You can also use the Docker image from [Docker Hub](https://hub.docker.com/r/ark
 
 ```shell
 docker run \
-  --interactive
-  --tty
+  --interactive \
+  --tty \
   --rm \
   --volume "$(pwd)/features:/data/pgcumber/features" \
   --network host \
