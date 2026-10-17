@@ -59,19 +59,41 @@ archives:
         formats: [zip]
 
 homebrew_casks:
-  - name: "{{ .ProjectName }}"
+  - name: pgcumber
     homepage: "https://github.com/arkadiusjonczek/pgcumber"
     description: "Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data."
     repository:
       owner: arkadiusjonczek
       name: homebrew-pgcumber
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    caveats: |
+      If macOS has a problem starting it,
+      then remove the attached quarantine from the binary file:
+      xattr -dr com.apple.quarantine #{caskroom_path}/{{ .Version }}/pgcumber
     hooks:
       post:
         install: |
           if OS.mac?
             system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/pgcumber"]
           end
+
+  - name: pgcumber-source
+    homepage: "https://github.com/arkadiusjonczek/pgcumber"
+    description: "Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data."
+    repository:
+      owner: arkadiusjonczek
+      name: homebrew-pgcumber
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    custom_block: |
+      depends_on formula: "go"
+      
+      stage_only true
+      
+      postflight do
+        system "go", "build", "-o", "#{HOMEBREW_PREFIX}/bin/pgcumber", "#{staged_path}/"
+      end
+      
+      uninstall quit: []
 
 changelog:
   sort: asc
