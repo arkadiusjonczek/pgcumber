@@ -70,9 +70,9 @@ pgcumber features/pgcumber.feature
 
 > If you are on macOS and you download the binary in e.g. the web browser you might remove the assigned quarantine attribute:
 
-```shell
-xattr -d com.apple.quarantine pgcumber
-```
+> ```shell
+> xattr -d com.apple.quarantine pgcumber
+> ```
 
 ## Docker
 
