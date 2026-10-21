@@ -66,11 +66,12 @@ pgcumber features/pgcumber.feature
 
 > [!WARNING]
 >
-> If you are on macOS and you download the binary you might need remove to the assigned quarantine attribute:
+> If you are on macOS and you download the binary,
+> you might need remove to the assigned quarantine attribute first:
 >
 > ```shell
 > xattr -d com.apple.quarantine pgcumber
-```
+> ```
 
 ## Docker
 
