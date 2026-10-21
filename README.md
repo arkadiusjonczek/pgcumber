@@ -56,6 +56,8 @@ Then you can install the command:
 brew install pgcumber
 ```
 
+Or just download the binary from the [releases](https://github.com/arkadiusjonczek/pgcumber/releases) page.
+
 ## Usage
 
 Use `pgcumber` and add the feature file or directory path as argument:
