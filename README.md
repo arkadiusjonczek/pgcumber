@@ -64,9 +64,7 @@ Use `pgcumber` and add the feature file or directory path as argument:
 pgcumber features/pgcumber.feature
 ```
 
-### macOS
-
-> [!NOTE]
+> [!IMPORTANT]
 >
 > If you are on macOS and you download the binary in e.g. the web browser you might remove the assigned quarantine attribute:
 >
