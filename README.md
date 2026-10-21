@@ -27,10 +27,10 @@ Feature: PostgreSQL admin user permissions
     And   I am a database superuser
 ```
 
-and test it using the `pgcumber` tool:
+and test it against your PostgreSQL server using the `pgcumber` tool:
 
 ```shell
-pgcumber features/admin.feature
+pgcumber features/user/admin.feature
 ```
 
 ## Install
@@ -53,10 +53,16 @@ Or just download the binary from the [releases](https://github.com/arkadiusjoncz
 
 ## Usage
 
-Use `pgcumber` and add the feature file or directory path as argument:
+Use `pgcumber` and add the feature file:
 
 ```shell
-pgcumber features/pgcumber.feature
+pgcumber features/user/admin.feature
+```
+
+or directory path as argument:
+
+```shell
+pgcumber features/
 ```
 
 > [!WARNING]
