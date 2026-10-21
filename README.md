@@ -66,8 +66,7 @@ pgcumber features/pgcumber.feature
 
 > [!WARNING]
 >
-> If you are on macOS and you download the binary,
-> 
+> If you are on macOS and you download the binary, <br>
 > you might need remove to the assigned quarantine attribute first:
 >
 > ```shell
