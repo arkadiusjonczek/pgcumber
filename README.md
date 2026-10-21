@@ -66,6 +66,8 @@ pgcumber features/pgcumber.feature
 
 ### macOS
 
+[!NOTE]
+
 If you are on macOS and you download the binary in e.g. the web browser you might remove the assigned quarantine attribute:
 
 ```shell
