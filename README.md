@@ -70,7 +70,7 @@ pgcumber features/pgcumber.feature
 >
 > ```shell
 > xattr -d com.apple.quarantine pgcumber
-> ```
+```
 
 ## Docker
 
