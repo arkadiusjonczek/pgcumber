@@ -8,10 +8,10 @@
 [![Downloads](https://img.shields.io/github/downloads/arkadiusjonczek/pgcumber/total?style=flat-square&color=blue "Downloads")](https://github.com/arkadiusjonczek/pgcumber/releases)
 [![Docker Pulls](https://img.shields.io/docker/pulls/arkadiusjonczek/pgcumber?style=flat-square&color=blue "Docker Pulls")](https://hub.docker.com/r/arkadiusjonczek/pgcumber)
 
-Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data.
+Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data:
 
 ```gherkin
-Feature: PostgreSQL user permissions
+Feature: PostgreSQL admin user permissions
 
   Scenario: The user admin is a superuser on the pgcumber database
 
@@ -25,19 +25,12 @@ Feature: PostgreSQL user permissions
 
     Then  the connection is successful
     And   I am a database superuser
+```
 
-  Scenario: The user johndoe is not a superuser on the pgcumber database
+and test it using the `pgcumber` tool:
 
-    Given The host "localhost"
-    And   The port "5432"
-    And   The database "pgcumber"
-
-    When  I use username "johndoe"
-    And   I use password "johndoe"
-    And   I connect to the server
-
-    Then  the connection is successful
-    And   I am not a database superuser
+```shell
+pgcumber features/admin.feature
 ```
 
 ## Install
