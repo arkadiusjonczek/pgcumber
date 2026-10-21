@@ -28,10 +28,21 @@ func (psql *Postgresql) InitializeScenario(sc *godog.ScenarioContext) {
 
 	sc.When(`^I use username "([^"]*)"$`, psql.iUseUsername)
 	sc.When(`^I use password "([^"]*)"$`, psql.iUsePassword)
+
+	sc.When(`^I use username from env "([^"]*)"$`, psql.iUseUsernameFromEnvironmentVariable)
+	sc.When(`^I use username from env var "([^"]*)"$`, psql.iUseUsernameFromEnvironmentVariable)
+	sc.When(`^I use username from environment variable "([^"]*)"$`, psql.iUseUsernameFromEnvironmentVariable)
+	sc.When(`^I use password from env "([^"]*)"$`, psql.iUsePasswordFromEnvironmentVariable)
+	sc.When(`^I use password from env var "([^"]*)"$`, psql.iUsePasswordFromEnvironmentVariable)
 	sc.When(`^I use password from environment variable "([^"]*)"$`, psql.iUsePasswordFromEnvironmentVariable)
+
+	sc.When(`^I use username from file "([^"]*)"$`, psql.iUseUsernameFromFile)
+	sc.When(`^I use password from file "([^"]*)"$`, psql.iUsePasswordFromFile)
+
 	sc.When(`^I connect to the server$`, psql.iConnectToTheServer)
 
 	sc.Then(`^the connection is successful$`, psql.theConnectionIsSuccessful)
+
 	sc.Then(`^I am a database superuser$`, psql.iAmADatabaseSuperUser)
 	sc.Then(`^I am not a database superuser$`, psql.iAmNotADatabaseSuperUser)
 
@@ -96,6 +107,21 @@ func (psql *Postgresql) iUsePassword(password string) error {
 	return nil
 }
 
+func (psql *Postgresql) iUseUsernameFromEnvironmentVariable(usernameEnvironmentVariable string) error {
+	if usernameEnvironmentVariable == "" {
+		return fmt.Errorf("username environment variable is required")
+	}
+
+	username := os.Getenv(usernameEnvironmentVariable)
+	if username == "" {
+		return fmt.Errorf("username is required")
+	}
+
+	psql.username = username
+
+	return nil
+}
+
 func (psql *Postgresql) iUsePasswordFromEnvironmentVariable(passwordEnvironmentVariable string) error {
 	if passwordEnvironmentVariable == "" {
 		return fmt.Errorf("password environment variable is required")
@@ -107,6 +133,36 @@ func (psql *Postgresql) iUsePasswordFromEnvironmentVariable(passwordEnvironmentV
 	}
 
 	psql.password = password
+
+	return nil
+}
+
+func (psql *Postgresql) iUseUsernameFromFile(filepath string) error {
+	if filepath == "" {
+		return fmt.Errorf("username file path is required")
+	}
+
+    data, err := os.ReadFile(filepath)
+    if err != nil {
+        return fmt.Errorf("error reading user from file '%s'", filepath)
+    }
+
+	psql.username = string(data)
+
+	return nil
+}
+
+func (psql *Postgresql) iUsePasswordFromFile(filepath string) error {
+	if filepath == "" {
+		return fmt.Errorf("password file path is required")
+	}
+
+    data, err := os.ReadFile(filepath)
+    if err != nil {
+        return fmt.Errorf("error reading password from file '%s'", filepath)
+    }
+
+	psql.password = string(data)
 
 	return nil
 }
