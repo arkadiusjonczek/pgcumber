@@ -27,7 +27,7 @@ Feature: PostgreSQL admin user permissions
     And   I am a database superuser
 ```
 
-and test it against your PostgreSQL server using the `pgcumber` tool:
+and test it against your PostgreSQL database using `pgcumber`:
 
 ```shell
 pgcumber features/user/admin.feature
