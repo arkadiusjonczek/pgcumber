@@ -67,8 +67,7 @@ pgcumber features/
 
 > [!WARNING]
 >
-> If you are on macOS and you download the binary, <br>
-> you might need remove to the assigned quarantine attribute first:
+> If you use macOS and you download the binary, you might need remove to the assigned quarantine attribute:
 >
 > ```shell
 > xattr -d com.apple.quarantine pgcumber
