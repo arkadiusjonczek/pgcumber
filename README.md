@@ -73,6 +73,8 @@ pgcumber features/
 > ```shell
 > xattr -d com.apple.quarantine pgcumber
 > ```
+>
+> This will be done automatically if you install the `pgcumber` binary with homebrew.
 
 ## Docker
 
