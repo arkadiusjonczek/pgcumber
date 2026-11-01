@@ -90,7 +90,7 @@ homebrew_casks:
       stage_only true
       
       postflight_steps do
-        run "go", args: ["build", "-o", "#{HOMEBREW_PREFIX}/bin/pgcumber", "{{staged_path}}/"]
+        run "go", args: ["build", "-o", "#{HOMEBREW_PREFIX}/bin/pgcumber", "{{ .StagedPath }}/"]
       end
       
       uninstall quit: []
