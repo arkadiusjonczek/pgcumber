@@ -33,7 +33,7 @@ and test it against your PostgreSQL database using `pgcumber`:
 pgcumber features/user/admin.feature
 ```
 
-## Install
+## Install binary
 
 Use [homebrew](https://brew.sh/) to install `pgcumber` on macOS or Linux.
 
@@ -50,6 +50,22 @@ brew install pgcumber
 ```
 
 Or just download the binary from the [releases](https://github.com/arkadiusjonczek/pgcumber/releases) page.
+
+## Install from source
+
+Use [homebrew](https://brew.sh/) to install `pgcumber` from source on macOS or Linux.
+
+First add the tap to homebrew:
+
+```shell
+brew tap arkadiusjonczek/pgcumber-source
+```
+
+Then you can install the command:
+
+```shell
+brew install pgcumber
+```
 
 ## Usage
 
