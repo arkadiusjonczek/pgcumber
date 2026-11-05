@@ -33,6 +33,8 @@ and test it against your PostgreSQL database using `pgcumber`:
 pgcumber features/user/admin.feature
 ```
 
+Take a look at the [available Steps](docs/steps.md) to have better overview over all steps.
+
 ## Install binary
 
 Use [homebrew](https://brew.sh/) to install `pgcumber` on macOS or Linux.
