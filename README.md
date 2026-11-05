@@ -43,7 +43,7 @@ You can either
 - install the homebrew cask (binary) or
 - install the homebrew formula, which builds the binary from the source code
 
-First add the tap to homebrew:
+First add one tap to homebrew:
 
 ```shell
 # homebrew cask
