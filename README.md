@@ -39,7 +39,7 @@ Take a look at the [available Steps](docs/steps.md) to have better overview over
 
 The easiest way is to just download the binary for your operation system and architecture from the [releases](https://github.com/arkadiusjonczek/pgcumber/releases) page.
 
-## macOS & Linux
+### macOS & Linux
 
 Use [homebrew](https://brew.sh/) to install `pgcumber` on macOS & Linux.
 
