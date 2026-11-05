@@ -1,6 +1,6 @@
 # Available Steps for pgcumber
 
-You can use the following Steps for either Given, When or Then Steps.
+You can use the following Steps as described in Given, When or Then Steps.
 
 ## Given
 
