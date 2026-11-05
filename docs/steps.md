@@ -39,3 +39,7 @@ Then the connection is successful
 ```
 Then I am a database superuser
 ```
+
+```
+Then I am not a database superuser
+```
