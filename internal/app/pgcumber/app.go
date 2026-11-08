@@ -21,26 +21,26 @@ type App struct {
 	featuresPath string
 }
 
-func (a *App) InitializeScenario(sc *godog.ScenarioContext) {
-	scenarios := []Scenario{
-		&Postgresql{},
-	}
-
-	for _, scenario := range scenarios {
-		scenario.InitializeScenario(sc)
-	}
+func (app *App) InitializeTestsuite(_ *godog.TestSuiteContext) {
+	// nothing to initialize right now
 }
 
-func (a *App) Run() {
+func (app *App) InitializeScenario(sc *godog.ScenarioContext) {
+	postgresqlScenario := &PostgresqlScenario{}
+	postgresqlScenario.InitializeScenario(sc)
+}
+
+func (app *App) Run() {
 	opts := godog.Options{
 		Format: "pretty",
-		Paths:  []string{a.featuresPath},
+		Paths:  []string{app.featuresPath},
 	}
 
 	status := godog.TestSuite{
-		Name:                "godog",
-		ScenarioInitializer: a.InitializeScenario,
-		Options:             &opts,
+		Name:                 "pgcumber",
+		TestSuiteInitializer: app.InitializeTestsuite,
+		ScenarioInitializer:  app.InitializeScenario,
+		Options:              &opts,
 	}.Run()
 
 	if status != 0 {
