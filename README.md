@@ -37,7 +37,11 @@ Take a look at the [available Steps](docs/steps.md) to have better overview over
 
 ## Installation
 
-Use [homebrew](https://brew.sh/) to install `pgcumber` on macOS & Linux.
+Use [homebrew](https://brew.sh/) to install `pgcumber` on macOS or Linux.
+
+Or just download the binary from the [releases](https://github.com/arkadiusjonczek/pgcumber/releases) page for your operating system and architecture.
+
+### Homebrew
 
 You can either
 - install the homebrew cask (binary) or
@@ -58,8 +62,6 @@ Then you can install the command:
 ```shell
 brew install pgcumber
 ```
-
-Or just download the binary for your operating system and architecture from the [releases](https://github.com/arkadiusjonczek/pgcumber/releases) page.
 
 ## Usage
 
