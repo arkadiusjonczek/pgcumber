@@ -1,12 +1,11 @@
-//go:build integration
-
-package pgcumber
+package integration
 
 import (
 	"context"
 	"path/filepath"
 	"testing"
 
+	"github.com/arkadiusjonczek/pgcumber/internal/app/pgcumber"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go/modules/compose"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -15,7 +14,7 @@ import (
 func Test_App_Run(t *testing.T) {
 	ctx := context.Background()
 
-	dockerCompose, err := compose.NewDockerCompose(filepath.Join("../../../", "docker-compose.yaml"))
+	dockerCompose, err := compose.NewDockerCompose(filepath.Join("../../", "docker-compose.yaml"))
 	require.NoError(t, err)
 
 	err = dockerCompose.
@@ -25,7 +24,7 @@ func Test_App_Run(t *testing.T) {
 
 	defer dockerCompose.Down(ctx)
 
-	app, err := NewApp(filepath.Join("../../../", "features/"))
+	app, err := pgcumber.NewApp(filepath.Join("../../", "features/"))
 	require.NoError(t, err)
 	require.NotNil(t, app)
 

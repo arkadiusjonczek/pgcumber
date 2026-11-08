@@ -28,7 +28,7 @@ jobs:
           args: --timeout=5m
 
       - name: Install dependencies
-        run: go mod download
+        run: make install
 
       - name: Run Tests
-        run: go test -v -tags=integration ./...
+        run: make test
