@@ -1,4 +1,5 @@
-.PHONY: test
+.DEFAULT_GOAL := test
+.PHONY: lint test
 
 install: install-dependencies
 
@@ -17,3 +18,9 @@ unit-tests:
 integration-tests:
 	@echo "=== Starting Integration Tests ==="
 	go test -v ./tests/integration/...
+
+build:
+	go build -o pgcumber ./cmd/pgcumber
+
+check-release:
+	goreleaser check

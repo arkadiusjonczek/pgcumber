@@ -9,9 +9,9 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-var _ Scenario = (*Postgresql)(nil)
+var _ Scenario = (*PostgresqlScenario)(nil)
 
-type Postgresql struct {
+type PostgresqlScenario struct {
 	conn *pgx.Conn
 
 	host     string
@@ -21,7 +21,7 @@ type Postgresql struct {
 	database string
 }
 
-func (psql *Postgresql) InitializeScenario(sc *godog.ScenarioContext) {
+func (psql *PostgresqlScenario) InitializeScenario(sc *godog.ScenarioContext) {
 	sc.Given(`^The host "([^"]*)"$`, psql.theHost)
 	sc.Given(`^The port "([^"]*)"$`, psql.thePort)
 	sc.Given(`^The database "([^"]*)"$`, psql.theDatabase)
@@ -57,7 +57,7 @@ func (psql *Postgresql) InitializeScenario(sc *godog.ScenarioContext) {
 	})
 }
 
-func (psql *Postgresql) theHost(host string) error {
+func (psql *PostgresqlScenario) theHost(host string) error {
 	if host == "" {
 		return fmt.Errorf("host is required")
 	}
@@ -67,7 +67,7 @@ func (psql *Postgresql) theHost(host string) error {
 	return nil
 }
 
-func (psql *Postgresql) thePort(port string) error {
+func (psql *PostgresqlScenario) thePort(port string) error {
 	if port == "" {
 		return fmt.Errorf("port is required")
 	}
@@ -77,7 +77,7 @@ func (psql *Postgresql) thePort(port string) error {
 	return nil
 }
 
-func (psql *Postgresql) theDatabase(database string) error {
+func (psql *PostgresqlScenario) theDatabase(database string) error {
 	if database == "" {
 		return fmt.Errorf("database is required")
 	}
@@ -87,7 +87,7 @@ func (psql *Postgresql) theDatabase(database string) error {
 	return nil
 }
 
-func (psql *Postgresql) iUseUsername(username string) error {
+func (psql *PostgresqlScenario) iUseUsername(username string) error {
 	if username == "" {
 		return fmt.Errorf("username is required")
 	}
@@ -97,7 +97,7 @@ func (psql *Postgresql) iUseUsername(username string) error {
 	return nil
 }
 
-func (psql *Postgresql) iUsePassword(password string) error {
+func (psql *PostgresqlScenario) iUsePassword(password string) error {
 	if password == "" {
 		return fmt.Errorf("password is required")
 	}
@@ -107,7 +107,7 @@ func (psql *Postgresql) iUsePassword(password string) error {
 	return nil
 }
 
-func (psql *Postgresql) iUseUsernameFromEnvironmentVariable(usernameEnvironmentVariable string) error {
+func (psql *PostgresqlScenario) iUseUsernameFromEnvironmentVariable(usernameEnvironmentVariable string) error {
 	if usernameEnvironmentVariable == "" {
 		return fmt.Errorf("username environment variable is required")
 	}
@@ -122,7 +122,7 @@ func (psql *Postgresql) iUseUsernameFromEnvironmentVariable(usernameEnvironmentV
 	return nil
 }
 
-func (psql *Postgresql) iUsePasswordFromEnvironmentVariable(passwordEnvironmentVariable string) error {
+func (psql *PostgresqlScenario) iUsePasswordFromEnvironmentVariable(passwordEnvironmentVariable string) error {
 	if passwordEnvironmentVariable == "" {
 		return fmt.Errorf("password environment variable is required")
 	}
@@ -137,37 +137,37 @@ func (psql *Postgresql) iUsePasswordFromEnvironmentVariable(passwordEnvironmentV
 	return nil
 }
 
-func (psql *Postgresql) iUseUsernameFromFile(filepath string) error {
+func (psql *PostgresqlScenario) iUseUsernameFromFile(filepath string) error {
 	if filepath == "" {
 		return fmt.Errorf("username file path is required")
 	}
 
-    data, err := os.ReadFile(filepath)
-    if err != nil {
-        return fmt.Errorf("error reading user from file '%s'", filepath)
-    }
+	data, err := os.ReadFile(filepath)
+	if err != nil {
+		return fmt.Errorf("error reading user from file '%s'", filepath)
+	}
 
 	psql.username = string(data)
 
 	return nil
 }
 
-func (psql *Postgresql) iUsePasswordFromFile(filepath string) error {
+func (psql *PostgresqlScenario) iUsePasswordFromFile(filepath string) error {
 	if filepath == "" {
 		return fmt.Errorf("password file path is required")
 	}
 
-    data, err := os.ReadFile(filepath)
-    if err != nil {
-        return fmt.Errorf("error reading password from file '%s'", filepath)
-    }
+	data, err := os.ReadFile(filepath)
+	if err != nil {
+		return fmt.Errorf("error reading password from file '%s'", filepath)
+	}
 
 	psql.password = string(data)
 
 	return nil
 }
 
-func (psql *Postgresql) iConnectToTheServer() error {
+func (psql *PostgresqlScenario) iConnectToTheServer() error {
 	if psql.host == "" {
 		return fmt.Errorf("host is required")
 	} else if psql.username == "" {
@@ -183,7 +183,7 @@ func (psql *Postgresql) iConnectToTheServer() error {
 	return psql.iConnectoTo(url)
 }
 
-func (psql *Postgresql) iConnectoTo(url string) error {
+func (psql *PostgresqlScenario) iConnectoTo(url string) error {
 	conn, err := pgx.Connect(context.Background(), url)
 	if err != nil {
 		return fmt.Errorf("could not connect to database: %w", err)
@@ -194,7 +194,7 @@ func (psql *Postgresql) iConnectoTo(url string) error {
 	return nil
 }
 
-func (psql *Postgresql) theConnectionIsSuccessful() error {
+func (psql *PostgresqlScenario) theConnectionIsSuccessful() error {
 	if psql.conn == nil {
 		return fmt.Errorf("the database connection is nil")
 	}
@@ -202,7 +202,7 @@ func (psql *Postgresql) theConnectionIsSuccessful() error {
 	return nil
 }
 
-func (psql *Postgresql) iAmADatabaseSuperUser() error {
+func (psql *PostgresqlScenario) iAmADatabaseSuperUser() error {
 	if psql.conn == nil {
 		return fmt.Errorf("could not access database because connection is nil")
 	}
@@ -222,7 +222,7 @@ func (psql *Postgresql) iAmADatabaseSuperUser() error {
 	return nil
 }
 
-func (psql *Postgresql) iAmNotADatabaseSuperUser() error {
+func (psql *PostgresqlScenario) iAmNotADatabaseSuperUser() error {
 	if psql.conn == nil {
 		return fmt.Errorf("could not access database because connection is nil")
 	}
