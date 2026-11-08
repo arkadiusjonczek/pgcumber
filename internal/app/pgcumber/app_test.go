@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_NewApp(t *testing.T) {
+func Test_NewApp_ReturnsError(t *testing.T) {
 	app, err := NewApp("")
 
 	require.Error(t, err)
