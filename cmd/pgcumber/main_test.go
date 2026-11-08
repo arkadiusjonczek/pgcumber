@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_run(t *testing.T) {
+func Test_run_ReturnsError(t *testing.T) {
 	os.Args = os.Args[0:1]
 	err := run()
 
