@@ -5,6 +5,9 @@ install: install-dependencies
 install-dependencies:
 	go mod download
 
+lint:
+	golangci-lint run
+
 test: unit-tests integration-tests
 
 unit-tests:

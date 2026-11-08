@@ -22,7 +22,10 @@ func Test_App_Run(t *testing.T) {
 		Up(ctx, compose.Wait(true))
 	require.NoError(t, err)
 
-	defer dockerCompose.Down(ctx)
+	defer func() {
+		err := dockerCompose.Down(ctx)
+		require.NoError(t, err)
+	}()
 
 	app, err := pgcumber.NewApp(filepath.Join("../../", "features/"))
 	require.NoError(t, err)
