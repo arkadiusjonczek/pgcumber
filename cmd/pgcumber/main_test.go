@@ -14,8 +14,7 @@ func Test_run_ReturnsError(t *testing.T) {
 	err := run()
 
 	require.Error(t, err)
-	require.ErrorContains(t, err, "usage: ")
-	require.ErrorContains(t, err, " <path to features file or directory>")
+	require.ErrorContains(t, err, "no arguments given")
 }
 
 func Test_run_ReturnsVersion(t *testing.T) {
