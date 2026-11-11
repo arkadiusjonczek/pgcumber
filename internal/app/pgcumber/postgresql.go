@@ -12,6 +12,8 @@ import (
 var _ Scenario = (*PostgresqlScenario)(nil)
 
 type PostgresqlScenario struct {
+	autoconnect bool
+
 	conn *pgx.Conn
 
 	host     string
@@ -21,7 +23,27 @@ type PostgresqlScenario struct {
 	database string
 }
 
+func (psql *PostgresqlScenario) InitializeTestsuite(_ *godog.TestSuiteContext) {
+	// nothing to do right now
+}
+
 func (psql *PostgresqlScenario) InitializeScenario(sc *godog.ScenarioContext) {
+	sc.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+		scenarioAutoconnect := false
+		for _, tag := range sc.Tags {
+			if tag.Name == "@autoconnect" {
+				scenarioAutoconnect = true
+			}
+		}
+
+		if psql.autoconnect || scenarioAutoconnect {
+			// TODO: use specific function instead of cucumber function
+			_ = psql.iConnectToTheServer()
+		}
+
+		return ctx, nil
+	})
+
 	sc.Given(`^The host "([^"]*)"$`, psql.theHost)
 	sc.Given(`^The port "([^"]*)"$`, psql.thePort)
 	sc.Given(`^The database "([^"]*)"$`, psql.theDatabase)
@@ -29,14 +51,14 @@ func (psql *PostgresqlScenario) InitializeScenario(sc *godog.ScenarioContext) {
 	sc.When(`^I use username "([^"]*)"$`, psql.iUseUsername)
 	sc.When(`^I use password "([^"]*)"$`, psql.iUsePassword)
 
-	sc.When(`^I use username from env "([^"]*)"$`, psql.iUseUsernameFromEnvironmentVariable)
 	sc.When(`^I use username from env var "([^"]*)"$`, psql.iUseUsernameFromEnvironmentVariable)
 	sc.When(`^I use username from environment variable "([^"]*)"$`, psql.iUseUsernameFromEnvironmentVariable)
-	sc.When(`^I use password from env "([^"]*)"$`, psql.iUsePasswordFromEnvironmentVariable)
+
 	sc.When(`^I use password from env var "([^"]*)"$`, psql.iUsePasswordFromEnvironmentVariable)
 	sc.When(`^I use password from environment variable "([^"]*)"$`, psql.iUsePasswordFromEnvironmentVariable)
 
 	sc.When(`^I use username from file "([^"]*)"$`, psql.iUseUsernameFromFile)
+
 	sc.When(`^I use password from file "([^"]*)"$`, psql.iUsePasswordFromFile)
 
 	sc.When(`^I connect to the server$`, psql.iConnectToTheServer)

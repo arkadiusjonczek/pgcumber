@@ -9,16 +9,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_run_ReturnsError(t *testing.T) {
+func Test_run_WithoutArguments_ReturnsError(t *testing.T) {
 	os.Args = os.Args[0:1]
 	err := run()
 
 	require.Error(t, err)
-	require.ErrorContains(t, err, "usage: ")
-	require.ErrorContains(t, err, " <path to features file or directory>")
+	require.ErrorContains(t, err, "no arguments given")
 }
 
-func Test_run_ReturnsVersion(t *testing.T) {
+func Test_run_WithVersionArgument_ReturnsVersion(t *testing.T) {
 	oldStdout := os.Stdout
 	defer func() { os.Stdout = oldStdout }()
 
