@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_run_ReturnsError(t *testing.T) {
+func Test_run_WithoutArguments_ReturnsError(t *testing.T) {
 	os.Args = os.Args[0:1]
 	err := run()
 
@@ -17,7 +17,7 @@ func Test_run_ReturnsError(t *testing.T) {
 	require.ErrorContains(t, err, "no arguments given")
 }
 
-func Test_run_ReturnsVersion(t *testing.T) {
+func Test_run_WithVersionArgument_ReturnsVersion(t *testing.T) {
 	oldStdout := os.Stdout
 	defer func() { os.Stdout = oldStdout }()
 
