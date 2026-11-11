@@ -24,13 +24,26 @@ type PostgresqlScenario struct {
 }
 
 func (psql *PostgresqlScenario) InitializeTestsuite(_ *godog.TestSuiteContext) {
-	if psql.autoconnect {
-		// TODO: use specific function instead of cucumber function
-		_ = psql.iConnectToTheServer()
-	}
+	// nothing to do right now
 }
 
 func (psql *PostgresqlScenario) InitializeScenario(sc *godog.ScenarioContext) {
+	sc.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+		scenarioAutoconnect := false
+		for _, tag := range sc.Tags {
+			if tag.Name == "@autoconnect" {
+				scenarioAutoconnect = true
+			}
+		}
+
+		if psql.autoconnect || scenarioAutoconnect {
+			// TODO: use specific function instead of cucumber function
+			_ = psql.iConnectToTheServer()
+		}
+
+		return ctx, nil
+	})
+
 	sc.Given(`^The host "([^"]*)"$`, psql.theHost)
 	sc.Given(`^The port "([^"]*)"$`, psql.thePort)
 	sc.Given(`^The database "([^"]*)"$`, psql.theDatabase)
