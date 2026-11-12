@@ -51,10 +51,8 @@ func (psql *PostgresqlScenario) InitializeScenario(sc *godog.ScenarioContext) {
 	sc.When(`^I use username "([^"]*)"$`, psql.iUseUsername)
 	sc.When(`^I use password "([^"]*)"$`, psql.iUsePassword)
 
-	sc.When(`^I use username from env var "([^"]*)"$`, psql.iUseUsernameFromEnvironmentVariable)
 	sc.When(`^I use username from environment variable "([^"]*)"$`, psql.iUseUsernameFromEnvironmentVariable)
 
-	sc.When(`^I use password from env var "([^"]*)"$`, psql.iUsePasswordFromEnvironmentVariable)
 	sc.When(`^I use password from environment variable "([^"]*)"$`, psql.iUsePasswordFromEnvironmentVariable)
 
 	sc.When(`^I use username from file "([^"]*)"$`, psql.iUseUsernameFromFile)
@@ -67,6 +65,13 @@ func (psql *PostgresqlScenario) InitializeScenario(sc *godog.ScenarioContext) {
 
 	sc.Then(`^I am a database superuser$`, psql.iAmADatabaseSuperUser)
 	sc.Then(`^I am not a database superuser$`, psql.iAmNotADatabaseSuperUser)
+
+	sc.Then(`^the schema "([^"]*)" exists$`, psql.theSchemaExists)
+	sc.Then(`^the schema "([^"]*)" does not exist$`, psql.theSchemaNotExists)
+
+	sc.Then(`^the user has "([^"]*)" privilege on schema "([^"]*)"$`, psql.theUserHasPrivilegeOnSchema)
+
+	sc.Then(`^the table "([^"]*)" exists in schema "([^"]*)"$`, psql.theTableExistsInSchema)
 
 	sc.After(func(ctx context.Context, _ *godog.Scenario, err error) (context.Context, error) {
 		if psql.conn != nil {
@@ -259,6 +264,94 @@ func (psql *PostgresqlScenario) iAmNotADatabaseSuperUser() error {
 
 	if usesuper {
 		return fmt.Errorf("the current user is a super user")
+	}
+
+	return nil
+}
+
+func (psql *PostgresqlScenario) theSchemaExists(schema string) error {
+	if psql.conn == nil {
+		return fmt.Errorf("could not access database because connection is nil")
+	}
+
+	row := psql.conn.QueryRow(context.Background(), "SELECT EXISTS(SELECT 1 FROM information_schema.schemata WHERE schema_name = $1);", schema)
+
+	var exists bool
+	err := row.Scan(&exists)
+	if err != nil {
+		return fmt.Errorf("could not query database: %w", err)
+	}
+
+	if !exists {
+		return fmt.Errorf("the schema '%s' does not exist", schema)
+	}
+
+	return nil
+}
+
+func (psql *PostgresqlScenario) theSchemaNotExists(schema string) error {
+	if psql.conn == nil {
+		return fmt.Errorf("could not access database because connection is nil")
+	}
+
+	row := psql.conn.QueryRow(context.Background(), "SELECT EXISTS(SELECT 1 FROM information_schema.schemata WHERE schema_name = $1);", schema)
+
+	var exists bool
+	err := row.Scan(&exists)
+	if err != nil {
+		return fmt.Errorf("could not query database: %w", err)
+	}
+
+	if exists {
+		return fmt.Errorf("the schema '%s' does exist", schema)
+	}
+
+	return nil
+}
+
+func (psql *PostgresqlScenario) theUserHasPrivilegeOnSchema(privilege string, schemaName string) error {
+	if psql.conn == nil {
+		return fmt.Errorf("no active database connection")
+	}
+
+	var hasPrivilege bool
+	// Gültige Werte für privilege in PostgreSQL: 'USAGE', 'CREATE', 'USAGE, CREATE'
+	query := `SELECT has_schema_privilege(current_user, $1, $2)`
+
+	err := psql.conn.QueryRow(context.Background(), query, schemaName, privilege).Scan(&hasPrivilege)
+	if err != nil {
+		return fmt.Errorf("failed to check %s privilege for current user on schema %q: %w", privilege, schemaName, err)
+	}
+
+	if !hasPrivilege {
+		return fmt.Errorf("expected current user to have %s privilege on schema %q, but they do not", privilege, schemaName)
+	}
+
+	return nil
+}
+
+func (psql *PostgresqlScenario) theTableExistsInSchema(tableName, schemaName string) error {
+	if psql.conn == nil {
+		return fmt.Errorf("no active database connection")
+	}
+
+	var exists bool
+	query := `
+		SELECT EXISTS (
+			SELECT 1 
+			FROM information_schema.tables 
+			WHERE table_schema = $1 
+			  AND table_name = $2
+			  AND table_type = 'BASE TABLE'
+		)`
+
+	err := psql.conn.QueryRow(context.Background(), query, schemaName, tableName).Scan(&exists)
+	if err != nil {
+		return fmt.Errorf("failed to check if table %q.%q exists: %w", schemaName, tableName, err)
+	}
+
+	if !exists {
+		return fmt.Errorf("expected table %q to exist in schema %q, but it does not", tableName, schemaName)
 	}
 
 	return nil

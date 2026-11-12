@@ -12,3 +12,11 @@ Feature: PostgreSQL admin user permissions
 
     Then  the connection is successful
     And   I am a database superuser
+
+    Then  the schema "public" exists
+    And   the user has "USAGE" privilege on schema "public"
+    And   the user has "CREATE" privilege on schema "public"
+
+    Then  the table "user" exists in schema "public"
+
+
