@@ -1,13 +1,10 @@
-package pgcumber
+package cucumber
 
 import (
 	"github.com/cucumber/godog"
 )
 
-type Testsuite interface {
+type GodogTestsuite interface {
 	InitializeTestsuite(tsc *godog.TestSuiteContext)
-}
-
-type Scenario interface {
 	InitializeScenario(sc *godog.ScenarioContext)
 }

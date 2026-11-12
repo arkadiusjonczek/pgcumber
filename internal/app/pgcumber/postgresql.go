@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/arkadiusjonczek/pgcumber/internal/pkg/cucumber"
 	"github.com/cucumber/godog"
 	"github.com/jackc/pgx/v5"
 )
 
-var _ Testsuite = (*PostgresqlTestsuite)(nil)
-var _ Scenario = (*PostgresqlTestsuite)(nil)
+var _ cucumber.GodogTestsuite = (*PostgresqlTestsuite)(nil)
 
 type PostgresqlTestsuite struct {
 	autoconnect bool
