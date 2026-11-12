@@ -109,7 +109,7 @@ Use the docker compose file [docker-compose.yaml](docker-compose.yaml) to start 
 docker-compose up -d
 ```
 
-Then use `pgcumber` and the feature file [features/pgcumber.feature](features/pgcumber.feature):
+Then use `pgcumber` and the feature file [features/user/admin.feature](features/user/admin.feature):
 
 ```shell
 pgcumber features/pgcumber.feature

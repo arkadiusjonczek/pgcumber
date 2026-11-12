@@ -14,22 +14,23 @@ import (
 func Test_App_Run(t *testing.T) {
 	ctx := context.Background()
 
-	dockerCompose, err := compose.NewDockerCompose(filepath.Join("../../", "docker-compose.yaml"))
-	require.NoError(t, err)
+	dockerCompose, dockerComposeErr := compose.NewDockerCompose(filepath.Join("../../", "docker-compose.yaml"))
+	require.NoError(t, dockerComposeErr)
 
-	err = dockerCompose.
+	dockerComposeUpErr := dockerCompose.
 		WaitForService("postgres", wait.ForListeningPort("5432/tcp")).
 		Up(ctx, compose.Wait(true))
-	require.NoError(t, err)
+	require.NoError(t, dockerComposeUpErr)
 
 	defer func() {
-		err := dockerCompose.Down(ctx)
-		require.NoError(t, err)
+		dockerComposeDownErr := dockerCompose.Down(ctx)
+		require.NoError(t, dockerComposeDownErr)
 	}()
 
 	app, err := pgcumber.NewApp(filepath.Join("../../", "features/"))
 	require.NoError(t, err)
 	require.NotNil(t, app)
 
-	app.Run()
+	status := app.Run()
+	require.Equal(t, 0, status)
 }

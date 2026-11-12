@@ -23,7 +23,6 @@ When I use username "admin"
 ```
 
 ```
-When I use username from env var "PSQL_USERNAME"
 When I use username from environment variable "PSQL_USERNAME"
 ```
 
@@ -36,7 +35,6 @@ When I use password "admin"
 ```
 
 ```
-When I use password from env var "PSQL_PASSWORD"
 When I use password from environment variable "PSQL_PASSWORD"
 ```
 
@@ -60,4 +58,16 @@ Then I am a database superuser
 
 ```
 Then I am not a database superuser
+```
+
+```
+Then the schema "public" exists
+```
+
+```
+Then the user has "USAGE" privilege on schema "public"
+```
+
+```
+Then the table "user" exists in schema "public"
 ```
