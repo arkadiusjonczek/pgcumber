@@ -71,7 +71,7 @@ type App struct {
 
 	autoconnect bool
 
-	postgresqlScenario *PostgresqlScenario
+	postgresqlScenario *PostgresqlTestsuite
 }
 
 func (app *App) initializeTestsuite(tsc *godog.TestSuiteContext) {
@@ -83,7 +83,7 @@ func (app *App) initializeScenario(sc *godog.ScenarioContext) {
 }
 
 func (app *App) Run() int {
-	app.postgresqlScenario = &PostgresqlScenario{
+	app.postgresqlScenario = &PostgresqlTestsuite{
 		autoconnect: app.autoconnect,
 		host:        app.host,
 		port:        app.port,

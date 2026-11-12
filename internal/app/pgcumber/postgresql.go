@@ -9,7 +9,20 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-var _ Scenario = (*PostgresqlScenario)(nil)
+var _ Testsuite = (*PostgresqlTestsuite)(nil)
+var _ Scenario = (*PostgresqlTestsuite)(nil)
+
+type PostgresqlTestsuite struct {
+	autoconnect bool
+
+	// conn *pgx.Conn
+
+	host     string
+	port     string
+	username string
+	password string
+	database string
+}
 
 type PostgresqlScenario struct {
 	autoconnect bool
@@ -23,119 +36,129 @@ type PostgresqlScenario struct {
 	database string
 }
 
-func (psql *PostgresqlScenario) InitializeTestsuite(_ *godog.TestSuiteContext) {
+func (suite *PostgresqlTestsuite) InitializeTestsuite(_ *godog.TestSuiteContext) {
 	// nothing to do right now
 }
 
-func (psql *PostgresqlScenario) InitializeScenario(sc *godog.ScenarioContext) {
+func (suite *PostgresqlTestsuite) InitializeScenario(sc *godog.ScenarioContext) {
+	scenario := &PostgresqlScenario{
+		host:     suite.host,
+		port:     suite.port,
+		username: suite.username,
+		password: suite.password,
+		database: suite.database,
+	}
+
 	sc.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-		scenarioAutoconnect := false
 		for _, tag := range sc.Tags {
 			if tag.Name == "@autoconnect" {
-				scenarioAutoconnect = true
+				scenario.autoconnect = true
 			}
 		}
 
-		if psql.autoconnect || scenarioAutoconnect {
+		if suite.autoconnect || scenario.autoconnect {
 			// TODO: use specific function instead of cucumber function
-			_ = psql.iConnectToTheServer()
+			err := scenario.iConnectToTheServer()
+			if err != nil {
+				return ctx, fmt.Errorf("could not connect to postgresql server: %w", err)
+			}
 		}
 
 		return ctx, nil
 	})
 
-	sc.Given(`^The host "([^"]*)"$`, psql.theHost)
-	sc.Given(`^The port "([^"]*)"$`, psql.thePort)
-	sc.Given(`^The database "([^"]*)"$`, psql.theDatabase)
+	sc.Given(`^The host "([^"]*)"$`, scenario.theHost)
+	sc.Given(`^The port "([^"]*)"$`, scenario.thePort)
+	sc.Given(`^The database "([^"]*)"$`, scenario.theDatabase)
 
-	sc.When(`^I use username "([^"]*)"$`, psql.iUseUsername)
-	sc.When(`^I use password "([^"]*)"$`, psql.iUsePassword)
+	sc.When(`^I use username "([^"]*)"$`, scenario.iUseUsername)
+	sc.When(`^I use password "([^"]*)"$`, scenario.iUsePassword)
 
-	sc.When(`^I use username from environment variable "([^"]*)"$`, psql.iUseUsernameFromEnvironmentVariable)
+	sc.When(`^I use username from environment variable "([^"]*)"$`, scenario.iUseUsernameFromEnvironmentVariable)
 
-	sc.When(`^I use password from environment variable "([^"]*)"$`, psql.iUsePasswordFromEnvironmentVariable)
+	sc.When(`^I use password from environment variable "([^"]*)"$`, scenario.iUsePasswordFromEnvironmentVariable)
 
-	sc.When(`^I use username from file "([^"]*)"$`, psql.iUseUsernameFromFile)
+	sc.When(`^I use username from file "([^"]*)"$`, scenario.iUseUsernameFromFile)
 
-	sc.When(`^I use password from file "([^"]*)"$`, psql.iUsePasswordFromFile)
+	sc.When(`^I use password from file "([^"]*)"$`, scenario.iUsePasswordFromFile)
 
-	sc.When(`^I connect to the server$`, psql.iConnectToTheServer)
+	sc.When(`^I connect to the server$`, scenario.iConnectToTheServer)
 
-	sc.Then(`^the connection is successful$`, psql.theConnectionIsSuccessful)
+	sc.Then(`^the connection is successful$`, scenario.theConnectionIsSuccessful)
 
-	sc.Then(`^I am a database superuser$`, psql.iAmADatabaseSuperUser)
-	sc.Then(`^I am not a database superuser$`, psql.iAmNotADatabaseSuperUser)
+	sc.Then(`^I am a database superuser$`, scenario.iAmADatabaseSuperUser)
+	sc.Then(`^I am not a database superuser$`, scenario.iAmNotADatabaseSuperUser)
 
-	sc.Then(`^the schema "([^"]*)" exists$`, psql.theSchemaExists)
-	sc.Then(`^the schema "([^"]*)" does not exist$`, psql.theSchemaNotExists)
+	sc.Then(`^the schema "([^"]*)" exists$`, scenario.theSchemaExists)
+	sc.Then(`^the schema "([^"]*)" does not exist$`, scenario.theSchemaNotExists)
 
-	sc.Then(`^the user has "([^"]*)" privilege on schema "([^"]*)"$`, psql.theUserHasPrivilegeOnSchema)
+	sc.Then(`^the user has "([^"]*)" privilege on schema "([^"]*)"$`, scenario.theUserHasPrivilegeOnSchema)
 
-	sc.Then(`^the table "([^"]*)" exists in schema "([^"]*)"$`, psql.theTableExistsInSchema)
+	sc.Then(`^the table "([^"]*)" exists in schema "([^"]*)"$`, scenario.theTableExistsInSchema)
 
 	sc.After(func(ctx context.Context, _ *godog.Scenario, err error) (context.Context, error) {
-		if psql.conn != nil {
-			psqlerr := psql.conn.Close(ctx)
+		if scenario.conn != nil {
+			psqlerr := scenario.conn.Close(ctx)
 			if psqlerr != nil {
 				return ctx, psqlerr
 			}
-			psql.conn = nil
+			scenario.conn = nil
 		}
 		return ctx, err
 	})
 }
 
-func (psql *PostgresqlScenario) theHost(host string) error {
+func (scenario *PostgresqlScenario) theHost(host string) error {
 	if host == "" {
 		return fmt.Errorf("host is required")
 	}
 
-	psql.host = host
+	scenario.host = host
 
 	return nil
 }
 
-func (psql *PostgresqlScenario) thePort(port string) error {
+func (scenario *PostgresqlScenario) thePort(port string) error {
 	if port == "" {
 		return fmt.Errorf("port is required")
 	}
 
-	psql.port = port
+	scenario.port = port
 
 	return nil
 }
 
-func (psql *PostgresqlScenario) theDatabase(database string) error {
+func (scenario *PostgresqlScenario) theDatabase(database string) error {
 	if database == "" {
 		return fmt.Errorf("database is required")
 	}
 
-	psql.database = database
+	scenario.database = database
 
 	return nil
 }
 
-func (psql *PostgresqlScenario) iUseUsername(username string) error {
+func (scenario *PostgresqlScenario) iUseUsername(username string) error {
 	if username == "" {
 		return fmt.Errorf("username is required")
 	}
 
-	psql.username = username
+	scenario.username = username
 
 	return nil
 }
 
-func (psql *PostgresqlScenario) iUsePassword(password string) error {
+func (scenario *PostgresqlScenario) iUsePassword(password string) error {
 	if password == "" {
 		return fmt.Errorf("password is required")
 	}
 
-	psql.password = password
+	scenario.password = password
 
 	return nil
 }
 
-func (psql *PostgresqlScenario) iUseUsernameFromEnvironmentVariable(usernameEnvironmentVariable string) error {
+func (scenario *PostgresqlScenario) iUseUsernameFromEnvironmentVariable(usernameEnvironmentVariable string) error {
 	if usernameEnvironmentVariable == "" {
 		return fmt.Errorf("username environment variable is required")
 	}
@@ -145,12 +168,12 @@ func (psql *PostgresqlScenario) iUseUsernameFromEnvironmentVariable(usernameEnvi
 		return fmt.Errorf("username is required")
 	}
 
-	psql.username = username
+	scenario.username = username
 
 	return nil
 }
 
-func (psql *PostgresqlScenario) iUsePasswordFromEnvironmentVariable(passwordEnvironmentVariable string) error {
+func (scenario *PostgresqlScenario) iUsePasswordFromEnvironmentVariable(passwordEnvironmentVariable string) error {
 	if passwordEnvironmentVariable == "" {
 		return fmt.Errorf("password environment variable is required")
 	}
@@ -160,12 +183,12 @@ func (psql *PostgresqlScenario) iUsePasswordFromEnvironmentVariable(passwordEnvi
 		return fmt.Errorf("password is required")
 	}
 
-	psql.password = password
+	scenario.password = password
 
 	return nil
 }
 
-func (psql *PostgresqlScenario) iUseUsernameFromFile(filepath string) error {
+func (scenario *PostgresqlScenario) iUseUsernameFromFile(filepath string) error {
 	if filepath == "" {
 		return fmt.Errorf("username file path is required")
 	}
@@ -175,12 +198,12 @@ func (psql *PostgresqlScenario) iUseUsernameFromFile(filepath string) error {
 		return fmt.Errorf("error reading user from file '%s'", filepath)
 	}
 
-	psql.username = string(data)
+	scenario.username = string(data)
 
 	return nil
 }
 
-func (psql *PostgresqlScenario) iUsePasswordFromFile(filepath string) error {
+func (scenario *PostgresqlScenario) iUsePasswordFromFile(filepath string) error {
 	if filepath == "" {
 		return fmt.Errorf("password file path is required")
 	}
@@ -190,52 +213,52 @@ func (psql *PostgresqlScenario) iUsePasswordFromFile(filepath string) error {
 		return fmt.Errorf("error reading password from file '%s'", filepath)
 	}
 
-	psql.password = string(data)
+	scenario.password = string(data)
 
 	return nil
 }
 
-func (psql *PostgresqlScenario) iConnectToTheServer() error {
-	if psql.host == "" {
+func (scenario *PostgresqlScenario) iConnectToTheServer() error {
+	if scenario.host == "" {
 		return fmt.Errorf("host is required")
-	} else if psql.username == "" {
+	} else if scenario.username == "" {
 		return fmt.Errorf("username is required")
-	} else if psql.password == "" {
+	} else if scenario.password == "" {
 		return fmt.Errorf("password is required")
-	} else if psql.database == "" {
+	} else if scenario.database == "" {
 		return fmt.Errorf("database is required")
 	}
 
-	url := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", psql.username, psql.password, psql.host, psql.port, psql.database)
+	url := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", scenario.username, scenario.password, scenario.host, scenario.port, scenario.database)
 
-	return psql.iConnectoTo(url)
+	return scenario.iConnectoTo(url)
 }
 
-func (psql *PostgresqlScenario) iConnectoTo(url string) error {
+func (scenario *PostgresqlScenario) iConnectoTo(url string) error {
 	conn, err := pgx.Connect(context.Background(), url)
 	if err != nil {
 		return fmt.Errorf("could not connect to database: %w", err)
 	}
 
-	psql.conn = conn
+	scenario.conn = conn
 
 	return nil
 }
 
-func (psql *PostgresqlScenario) theConnectionIsSuccessful() error {
-	if psql.conn == nil {
+func (scenario *PostgresqlScenario) theConnectionIsSuccessful() error {
+	if scenario.conn == nil {
 		return fmt.Errorf("the database connection is nil")
 	}
 
 	return nil
 }
 
-func (psql *PostgresqlScenario) iAmADatabaseSuperUser() error {
-	if psql.conn == nil {
+func (scenario *PostgresqlScenario) iAmADatabaseSuperUser() error {
+	if scenario.conn == nil {
 		return fmt.Errorf("could not access database because connection is nil")
 	}
 
-	row := psql.conn.QueryRow(context.Background(), "SELECT usesuper FROM pg_user WHERE usename = current_user;")
+	row := scenario.conn.QueryRow(context.Background(), "SELECT usesuper FROM pg_user WHERE usename = current_user;")
 
 	var usesuper bool
 	err := row.Scan(&usesuper)
@@ -250,12 +273,12 @@ func (psql *PostgresqlScenario) iAmADatabaseSuperUser() error {
 	return nil
 }
 
-func (psql *PostgresqlScenario) iAmNotADatabaseSuperUser() error {
-	if psql.conn == nil {
+func (scenario *PostgresqlScenario) iAmNotADatabaseSuperUser() error {
+	if scenario.conn == nil {
 		return fmt.Errorf("could not access database because connection is nil")
 	}
 
-	row := psql.conn.QueryRow(context.Background(), "SELECT usesuper FROM pg_user WHERE usename = current_user;")
+	row := scenario.conn.QueryRow(context.Background(), "SELECT usesuper FROM pg_user WHERE usename = current_user;")
 
 	var usesuper bool
 	err := row.Scan(&usesuper)
@@ -270,12 +293,12 @@ func (psql *PostgresqlScenario) iAmNotADatabaseSuperUser() error {
 	return nil
 }
 
-func (psql *PostgresqlScenario) theSchemaExists(schema string) error {
-	if psql.conn == nil {
+func (scenario *PostgresqlScenario) theSchemaExists(schema string) error {
+	if scenario.conn == nil {
 		return fmt.Errorf("could not access database because connection is nil")
 	}
 
-	row := psql.conn.QueryRow(context.Background(), "SELECT EXISTS(SELECT 1 FROM information_schema.schemata WHERE schema_name = $1);", schema)
+	row := scenario.conn.QueryRow(context.Background(), "SELECT EXISTS(SELECT 1 FROM information_schema.schemata WHERE schema_name = $1);", schema)
 
 	var exists bool
 	err := row.Scan(&exists)
@@ -290,12 +313,12 @@ func (psql *PostgresqlScenario) theSchemaExists(schema string) error {
 	return nil
 }
 
-func (psql *PostgresqlScenario) theSchemaNotExists(schema string) error {
-	if psql.conn == nil {
+func (scenario *PostgresqlScenario) theSchemaNotExists(schema string) error {
+	if scenario.conn == nil {
 		return fmt.Errorf("could not access database because connection is nil")
 	}
 
-	row := psql.conn.QueryRow(context.Background(), "SELECT EXISTS(SELECT 1 FROM information_schema.schemata WHERE schema_name = $1);", schema)
+	row := scenario.conn.QueryRow(context.Background(), "SELECT EXISTS(SELECT 1 FROM information_schema.schemata WHERE schema_name = $1);", schema)
 
 	var exists bool
 	err := row.Scan(&exists)
@@ -310,8 +333,8 @@ func (psql *PostgresqlScenario) theSchemaNotExists(schema string) error {
 	return nil
 }
 
-func (psql *PostgresqlScenario) theUserHasPrivilegeOnSchema(privilege string, schemaName string) error {
-	if psql.conn == nil {
+func (scenario *PostgresqlScenario) theUserHasPrivilegeOnSchema(privilege string, schemaName string) error {
+	if scenario.conn == nil {
 		return fmt.Errorf("no active database connection")
 	}
 
@@ -319,7 +342,7 @@ func (psql *PostgresqlScenario) theUserHasPrivilegeOnSchema(privilege string, sc
 	// Gültige Werte für privilege in PostgreSQL: 'USAGE', 'CREATE', 'USAGE, CREATE'
 	query := `SELECT has_schema_privilege(current_user, $1, $2)`
 
-	err := psql.conn.QueryRow(context.Background(), query, schemaName, privilege).Scan(&hasPrivilege)
+	err := scenario.conn.QueryRow(context.Background(), query, schemaName, privilege).Scan(&hasPrivilege)
 	if err != nil {
 		return fmt.Errorf("failed to check %s privilege for current user on schema %q: %w", privilege, schemaName, err)
 	}
@@ -331,8 +354,8 @@ func (psql *PostgresqlScenario) theUserHasPrivilegeOnSchema(privilege string, sc
 	return nil
 }
 
-func (psql *PostgresqlScenario) theTableExistsInSchema(tableName, schemaName string) error {
-	if psql.conn == nil {
+func (scenario *PostgresqlScenario) theTableExistsInSchema(tableName, schemaName string) error {
+	if scenario.conn == nil {
 		return fmt.Errorf("no active database connection")
 	}
 
@@ -346,7 +369,7 @@ func (psql *PostgresqlScenario) theTableExistsInSchema(tableName, schemaName str
 			  AND table_type = 'BASE TABLE'
 		)`
 
-	err := psql.conn.QueryRow(context.Background(), query, schemaName, tableName).Scan(&exists)
+	err := scenario.conn.QueryRow(context.Background(), query, schemaName, tableName).Scan(&exists)
 	if err != nil {
 		return fmt.Errorf("failed to check if table %q.%q exists: %w", schemaName, tableName, err)
 	}

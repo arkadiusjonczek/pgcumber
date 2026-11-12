@@ -38,7 +38,7 @@ func help() string {
 	helpString += "Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data\n"
 	helpString += "\n"
 	helpString += "Options:\n"
-	helpString += "\t--autoconnect\tConnect to the PostgreSQL database using DATABASE_URL\n"
+	helpString += "\t--autoconnect\tAuto connect to the PostgreSQL server (requires autoconfig)\n"
 	helpString += "\t--version\tPrint version information and quit\n"
 	return helpString
 }
