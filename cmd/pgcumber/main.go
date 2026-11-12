@@ -134,7 +134,7 @@ func readPGPassFile(appOptions []pgcumber.AppOption) ([]pgcumber.AppOption, erro
 		appOptions = append(appOptions, pgcumber.WithDatabase(database))
 	}
 	if len(username) > 0 {
-		appOptions = append(appOptions, pgcumber.WithUser(database))
+		appOptions = append(appOptions, pgcumber.WithUser(username))
 	}
 	if len(password) > 0 {
 		appOptions = append(appOptions, pgcumber.WithPassword(password))

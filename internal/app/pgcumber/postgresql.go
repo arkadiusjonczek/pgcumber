@@ -79,6 +79,7 @@ func (psql *PostgresqlScenario) InitializeScenario(sc *godog.ScenarioContext) {
 			if psqlerr != nil {
 				return ctx, psqlerr
 			}
+			psql.conn = nil
 		}
 		return ctx, err
 	})
