@@ -3,6 +3,7 @@ package pgcumber
 import (
 	"fmt"
 
+	"github.com/arkadiusjonczek/pgcumber/internal/pkg/postgresql"
 	"github.com/cucumber/godog"
 )
 
@@ -70,39 +71,31 @@ type App struct {
 	database string
 
 	autoconnect bool
-
-	postgresqlScenario *PostgresqlTestsuite
-}
-
-func (app *App) initializeTestsuite(tsc *godog.TestSuiteContext) {
-	app.postgresqlScenario.InitializeTestsuite(tsc)
-}
-
-func (app *App) initializeScenario(sc *godog.ScenarioContext) {
-	app.postgresqlScenario.InitializeScenario(sc)
 }
 
 func (app *App) Run() int {
-	app.postgresqlScenario = &PostgresqlTestsuite{
-		autoconnect: app.autoconnect,
-		host:        app.host,
-		port:        app.port,
-		username:    app.username,
-		password:    app.password,
-		database:    app.database,
-	}
+	postgresqlTestsuite := postgresql.NewTestsuite(
+		app.autoconnect,
+		app.host,
+		app.port,
+		app.username,
+		app.password,
+		app.database,
+	)
 
 	opts := godog.Options{
 		Format: "pretty",
 		Paths:  []string{app.featuresPath},
 	}
 
-	status := godog.TestSuite{
+	testsuite := godog.TestSuite{
 		Name:                 "pgcumber",
-		TestSuiteInitializer: app.initializeTestsuite,
-		ScenarioInitializer:  app.initializeScenario,
+		TestSuiteInitializer: postgresqlTestsuite.InitializeTestsuite,
+		ScenarioInitializer:  postgresqlTestsuite.InitializeScenario,
 		Options:              &opts,
-	}.Run()
+	}
+
+	status := testsuite.Run()
 
 	return status
 }

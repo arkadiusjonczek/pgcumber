@@ -1,4 +1,4 @@
-package pgcumber
+package postgresql
 
 import (
 	"context"
@@ -10,12 +10,28 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-var _ cucumber.GodogTestsuite = (*PostgresqlTestsuite)(nil)
+var _ cucumber.GodogTestsuite = (*Testsuite)(nil)
 
-type PostgresqlTestsuite struct {
+func NewTestsuite(
+	autoconnect bool,
+	host string,
+	port string,
+	username string,
+	password string,
+	database string,
+) *Testsuite {
+	return &Testsuite{
+		autoconnect: autoconnect,
+		host:        host,
+		port:        port,
+		username:    username,
+		password:    password,
+		database:    database,
+	}
+}
+
+type Testsuite struct {
 	autoconnect bool
-
-	// conn *pgx.Conn
 
 	host     string
 	port     string
@@ -24,7 +40,7 @@ type PostgresqlTestsuite struct {
 	database string
 }
 
-type PostgresqlScenario struct {
+type Scenario struct {
 	autoconnect bool
 
 	conn *pgx.Conn
@@ -36,12 +52,12 @@ type PostgresqlScenario struct {
 	database string
 }
 
-func (suite *PostgresqlTestsuite) InitializeTestsuite(_ *godog.TestSuiteContext) {
+func (suite *Testsuite) InitializeTestsuite(_ *godog.TestSuiteContext) {
 	// nothing to do right now
 }
 
-func (suite *PostgresqlTestsuite) InitializeScenario(sc *godog.ScenarioContext) {
-	scenario := &PostgresqlScenario{
+func (suite *Testsuite) InitializeScenario(sc *godog.ScenarioContext) {
+	scenario := &Scenario{
 		host:     suite.host,
 		port:     suite.port,
 		username: suite.username,
@@ -108,7 +124,7 @@ func (suite *PostgresqlTestsuite) InitializeScenario(sc *godog.ScenarioContext) 
 	})
 }
 
-func (scenario *PostgresqlScenario) theHost(host string) error {
+func (scenario *Scenario) theHost(host string) error {
 	if host == "" {
 		return fmt.Errorf("host is required")
 	}
@@ -118,7 +134,7 @@ func (scenario *PostgresqlScenario) theHost(host string) error {
 	return nil
 }
 
-func (scenario *PostgresqlScenario) thePort(port string) error {
+func (scenario *Scenario) thePort(port string) error {
 	if port == "" {
 		return fmt.Errorf("port is required")
 	}
@@ -128,7 +144,7 @@ func (scenario *PostgresqlScenario) thePort(port string) error {
 	return nil
 }
 
-func (scenario *PostgresqlScenario) theDatabase(database string) error {
+func (scenario *Scenario) theDatabase(database string) error {
 	if database == "" {
 		return fmt.Errorf("database is required")
 	}
@@ -138,7 +154,7 @@ func (scenario *PostgresqlScenario) theDatabase(database string) error {
 	return nil
 }
 
-func (scenario *PostgresqlScenario) iUseUsername(username string) error {
+func (scenario *Scenario) iUseUsername(username string) error {
 	if username == "" {
 		return fmt.Errorf("username is required")
 	}
@@ -148,7 +164,7 @@ func (scenario *PostgresqlScenario) iUseUsername(username string) error {
 	return nil
 }
 
-func (scenario *PostgresqlScenario) iUsePassword(password string) error {
+func (scenario *Scenario) iUsePassword(password string) error {
 	if password == "" {
 		return fmt.Errorf("password is required")
 	}
@@ -158,7 +174,7 @@ func (scenario *PostgresqlScenario) iUsePassword(password string) error {
 	return nil
 }
 
-func (scenario *PostgresqlScenario) iUseUsernameFromEnvironmentVariable(usernameEnvironmentVariable string) error {
+func (scenario *Scenario) iUseUsernameFromEnvironmentVariable(usernameEnvironmentVariable string) error {
 	if usernameEnvironmentVariable == "" {
 		return fmt.Errorf("username environment variable is required")
 	}
@@ -173,7 +189,7 @@ func (scenario *PostgresqlScenario) iUseUsernameFromEnvironmentVariable(username
 	return nil
 }
 
-func (scenario *PostgresqlScenario) iUsePasswordFromEnvironmentVariable(passwordEnvironmentVariable string) error {
+func (scenario *Scenario) iUsePasswordFromEnvironmentVariable(passwordEnvironmentVariable string) error {
 	if passwordEnvironmentVariable == "" {
 		return fmt.Errorf("password environment variable is required")
 	}
@@ -188,7 +204,7 @@ func (scenario *PostgresqlScenario) iUsePasswordFromEnvironmentVariable(password
 	return nil
 }
 
-func (scenario *PostgresqlScenario) iUseUsernameFromFile(filepath string) error {
+func (scenario *Scenario) iUseUsernameFromFile(filepath string) error {
 	if filepath == "" {
 		return fmt.Errorf("username file path is required")
 	}
@@ -203,7 +219,7 @@ func (scenario *PostgresqlScenario) iUseUsernameFromFile(filepath string) error 
 	return nil
 }
 
-func (scenario *PostgresqlScenario) iUsePasswordFromFile(filepath string) error {
+func (scenario *Scenario) iUsePasswordFromFile(filepath string) error {
 	if filepath == "" {
 		return fmt.Errorf("password file path is required")
 	}
@@ -218,7 +234,7 @@ func (scenario *PostgresqlScenario) iUsePasswordFromFile(filepath string) error 
 	return nil
 }
 
-func (scenario *PostgresqlScenario) iConnectToTheServer() error {
+func (scenario *Scenario) iConnectToTheServer() error {
 	if scenario.host == "" {
 		return fmt.Errorf("host is required")
 	} else if scenario.username == "" {
@@ -234,7 +250,7 @@ func (scenario *PostgresqlScenario) iConnectToTheServer() error {
 	return scenario.iConnectoTo(url)
 }
 
-func (scenario *PostgresqlScenario) iConnectoTo(url string) error {
+func (scenario *Scenario) iConnectoTo(url string) error {
 	conn, err := pgx.Connect(context.Background(), url)
 	if err != nil {
 		return fmt.Errorf("could not connect to database: %w", err)
@@ -245,7 +261,7 @@ func (scenario *PostgresqlScenario) iConnectoTo(url string) error {
 	return nil
 }
 
-func (scenario *PostgresqlScenario) theConnectionIsSuccessful() error {
+func (scenario *Scenario) theConnectionIsSuccessful() error {
 	if scenario.conn == nil {
 		return fmt.Errorf("the database connection is nil")
 	}
@@ -253,7 +269,7 @@ func (scenario *PostgresqlScenario) theConnectionIsSuccessful() error {
 	return nil
 }
 
-func (scenario *PostgresqlScenario) iAmADatabaseSuperUser() error {
+func (scenario *Scenario) iAmADatabaseSuperUser() error {
 	if scenario.conn == nil {
 		return fmt.Errorf("could not access database because connection is nil")
 	}
@@ -273,7 +289,7 @@ func (scenario *PostgresqlScenario) iAmADatabaseSuperUser() error {
 	return nil
 }
 
-func (scenario *PostgresqlScenario) iAmNotADatabaseSuperUser() error {
+func (scenario *Scenario) iAmNotADatabaseSuperUser() error {
 	if scenario.conn == nil {
 		return fmt.Errorf("could not access database because connection is nil")
 	}
@@ -293,7 +309,7 @@ func (scenario *PostgresqlScenario) iAmNotADatabaseSuperUser() error {
 	return nil
 }
 
-func (scenario *PostgresqlScenario) theSchemaExists(schema string) error {
+func (scenario *Scenario) theSchemaExists(schema string) error {
 	if scenario.conn == nil {
 		return fmt.Errorf("could not access database because connection is nil")
 	}
@@ -313,7 +329,7 @@ func (scenario *PostgresqlScenario) theSchemaExists(schema string) error {
 	return nil
 }
 
-func (scenario *PostgresqlScenario) theSchemaNotExists(schema string) error {
+func (scenario *Scenario) theSchemaNotExists(schema string) error {
 	if scenario.conn == nil {
 		return fmt.Errorf("could not access database because connection is nil")
 	}
@@ -333,7 +349,7 @@ func (scenario *PostgresqlScenario) theSchemaNotExists(schema string) error {
 	return nil
 }
 
-func (scenario *PostgresqlScenario) theUserHasPrivilegeOnSchema(privilege string, schemaName string) error {
+func (scenario *Scenario) theUserHasPrivilegeOnSchema(privilege string, schemaName string) error {
 	if scenario.conn == nil {
 		return fmt.Errorf("no active database connection")
 	}
@@ -354,7 +370,7 @@ func (scenario *PostgresqlScenario) theUserHasPrivilegeOnSchema(privilege string
 	return nil
 }
 
-func (scenario *PostgresqlScenario) theTableExistsInSchema(tableName, schemaName string) error {
+func (scenario *Scenario) theTableExistsInSchema(tableName, schemaName string) error {
 	if scenario.conn == nil {
 		return fmt.Errorf("no active database connection")
 	}
