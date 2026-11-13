@@ -71,3 +71,7 @@ Then the user has "USAGE" privilege on schema "public"
 ```
 Then the table "user" exists in schema "public"
 ```
+
+```
+Then the current user has "SELECT" privilege on table "public.user"
+```

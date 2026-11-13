@@ -51,10 +51,10 @@ First add one tap to homebrew:
 
 ```shell
 # homebrew cask
-brew tap arkadiusjonczek/pgcumber
+brew tap pgcumber/cask
 
 # homebrew formula
-brew tap arkadiusjonczek/pgcumber-source
+brew tap pgcumber/formula
 ```
 
 Then you can install the command:
