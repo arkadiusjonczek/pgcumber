@@ -63,9 +63,9 @@ homebrew_casks:
     homepage: "https://github.com/arkadiusjonczek/pgcumber"
     description: "Use Gherkin to write plain-text, human-readable test cases for your PostgreSQL data."
     repository:
-      owner: arkadiusjonczek
-      name: homebrew-pgcumber
-      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+      owner: pgcumber
+      name: homebrew-cask
+      token: "{{ .Env.HOMEBREW_CASK_TAP_GITHUB_TOKEN }}"
     caveats: |
       If macOS has a problem starting it,
       then remove the attached quarantine from the binary file:
@@ -83,6 +83,7 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+      - "^tests:"
 
 release:
   footer: >-

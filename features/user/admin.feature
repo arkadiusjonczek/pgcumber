@@ -14,9 +14,10 @@ Feature: PostgreSQL admin user permissions
     And   I am a database superuser
 
     Then  the schema "public" exists
-    And   the user has "USAGE" privilege on schema "public"
-    And   the user has "CREATE" privilege on schema "public"
+    And   the current user has "USAGE" privilege on schema "public"
+    And   the current user has "CREATE" privilege on schema "public"
 
     Then  the table "user" exists in schema "public"
-
-
+    And   the current user has "SELECT" privilege on table "public.user"
+    And   the current user has "INSERT" privilege on table "public.user"
+    And   the current user has "UPDATE" privilege on table "public.user"

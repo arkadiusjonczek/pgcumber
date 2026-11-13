@@ -56,14 +56,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+          HOMEBREW_CASK_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_CASK_TAP_GITHUB_TOKEN }}
 
       - name: Update Homebrew Formula
         uses: wyattjoh/homebrew-bump-revision@v1
         with:
-          tap: arkadiusjonczek/homebrew-pgcumber-source
+          tap: pgcumber/homebrew-formula
           formula: pgcumber
-          github-token: ${{ secrets.HOMEBREW_TAP_SOURCE_GITHUB_TOKEN }}
+          github-token: ${{ secrets.HOMEBREW_FORMULA_TAP_GITHUB_TOKEN }}
 
       - name: Run Trivy Vulnerability Scanner
         uses: aquasecurity/trivy-action@v0.36.0

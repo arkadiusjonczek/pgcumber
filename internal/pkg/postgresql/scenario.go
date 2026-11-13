@@ -5,40 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/arkadiusjonczek/pgcumber/internal/pkg/cucumber"
-	"github.com/cucumber/godog"
 	"github.com/jackc/pgx/v5"
 )
-
-var _ cucumber.GodogTestsuite = (*Testsuite)(nil)
-
-func NewTestsuite(
-	autoconnect bool,
-	host string,
-	port string,
-	username string,
-	password string,
-	database string,
-) *Testsuite {
-	return &Testsuite{
-		autoconnect: autoconnect,
-		host:        host,
-		port:        port,
-		username:    username,
-		password:    password,
-		database:    database,
-	}
-}
-
-type Testsuite struct {
-	autoconnect bool
-
-	host     string
-	port     string
-	username string
-	password string
-	database string
-}
 
 type Scenario struct {
 	autoconnect bool
@@ -50,78 +18,6 @@ type Scenario struct {
 	username string
 	password string
 	database string
-}
-
-func (suite *Testsuite) InitializeTestsuite(_ *godog.TestSuiteContext) {
-	// nothing to do right now
-}
-
-func (suite *Testsuite) InitializeScenario(sc *godog.ScenarioContext) {
-	scenario := &Scenario{
-		host:     suite.host,
-		port:     suite.port,
-		username: suite.username,
-		password: suite.password,
-		database: suite.database,
-	}
-
-	sc.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-		for _, tag := range sc.Tags {
-			if tag.Name == "@autoconnect" {
-				scenario.autoconnect = true
-			}
-		}
-
-		if suite.autoconnect || scenario.autoconnect {
-			// TODO: use specific function instead of cucumber function
-			err := scenario.iConnectToTheServer()
-			if err != nil {
-				return ctx, fmt.Errorf("could not connect to postgresql server: %w", err)
-			}
-		}
-
-		return ctx, nil
-	})
-
-	sc.Given(`^The host "([^"]*)"$`, scenario.theHost)
-	sc.Given(`^The port "([^"]*)"$`, scenario.thePort)
-	sc.Given(`^The database "([^"]*)"$`, scenario.theDatabase)
-
-	sc.When(`^I use username "([^"]*)"$`, scenario.iUseUsername)
-	sc.When(`^I use password "([^"]*)"$`, scenario.iUsePassword)
-
-	sc.When(`^I use username from environment variable "([^"]*)"$`, scenario.iUseUsernameFromEnvironmentVariable)
-
-	sc.When(`^I use password from environment variable "([^"]*)"$`, scenario.iUsePasswordFromEnvironmentVariable)
-
-	sc.When(`^I use username from file "([^"]*)"$`, scenario.iUseUsernameFromFile)
-
-	sc.When(`^I use password from file "([^"]*)"$`, scenario.iUsePasswordFromFile)
-
-	sc.When(`^I connect to the server$`, scenario.iConnectToTheServer)
-
-	sc.Then(`^the connection is successful$`, scenario.theConnectionIsSuccessful)
-
-	sc.Then(`^I am a database superuser$`, scenario.iAmADatabaseSuperUser)
-	sc.Then(`^I am not a database superuser$`, scenario.iAmNotADatabaseSuperUser)
-
-	sc.Then(`^the schema "([^"]*)" exists$`, scenario.theSchemaExists)
-	sc.Then(`^the schema "([^"]*)" does not exist$`, scenario.theSchemaNotExists)
-
-	sc.Then(`^the user has "([^"]*)" privilege on schema "([^"]*)"$`, scenario.theUserHasPrivilegeOnSchema)
-
-	sc.Then(`^the table "([^"]*)" exists in schema "([^"]*)"$`, scenario.theTableExistsInSchema)
-
-	sc.After(func(ctx context.Context, _ *godog.Scenario, err error) (context.Context, error) {
-		if scenario.conn != nil {
-			psqlerr := scenario.conn.Close(ctx)
-			if psqlerr != nil {
-				return ctx, psqlerr
-			}
-			scenario.conn = nil
-		}
-		return ctx, err
-	})
 }
 
 func (scenario *Scenario) theHost(host string) error {
@@ -349,13 +245,12 @@ func (scenario *Scenario) theSchemaNotExists(schema string) error {
 	return nil
 }
 
-func (scenario *Scenario) theUserHasPrivilegeOnSchema(privilege string, schemaName string) error {
+func (scenario *Scenario) theCurrentUserHasPrivilegeOnSchema(privilege string, schemaName string) error {
 	if scenario.conn == nil {
 		return fmt.Errorf("no active database connection")
 	}
 
 	var hasPrivilege bool
-	// Gültige Werte für privilege in PostgreSQL: 'USAGE', 'CREATE', 'USAGE, CREATE'
 	query := `SELECT has_schema_privilege(current_user, $1, $2)`
 
 	err := scenario.conn.QueryRow(context.Background(), query, schemaName, privilege).Scan(&hasPrivilege)
@@ -370,7 +265,27 @@ func (scenario *Scenario) theUserHasPrivilegeOnSchema(privilege string, schemaNa
 	return nil
 }
 
-func (scenario *Scenario) theTableExistsInSchema(tableName, schemaName string) error {
+func (scenario *Scenario) theUserHasPrivilegeOnSchema(user string, privilege string, schemaName string) error {
+	if scenario.conn == nil {
+		return fmt.Errorf("no active database connection")
+	}
+
+	var hasPrivilege bool
+	query := `SELECT has_schema_privilege($1, $2, $3)`
+
+	err := scenario.conn.QueryRow(context.Background(), query, user, schemaName, privilege).Scan(&hasPrivilege)
+	if err != nil {
+		return fmt.Errorf("failed to check %s privilege for user %s on schema %q: %w", privilege, user, schemaName, err)
+	}
+
+	if !hasPrivilege {
+		return fmt.Errorf("expected user %s to have %s privilege on schema %q, but they do not", user, privilege, schemaName)
+	}
+
+	return nil
+}
+
+func (scenario *Scenario) theTableExistsInSchema(tableName string, schemaName string) error {
 	if scenario.conn == nil {
 		return fmt.Errorf("no active database connection")
 	}
@@ -392,6 +307,26 @@ func (scenario *Scenario) theTableExistsInSchema(tableName, schemaName string) e
 
 	if !exists {
 		return fmt.Errorf("expected table %q to exist in schema %q, but it does not", tableName, schemaName)
+	}
+
+	return nil
+}
+
+func (scenario *Scenario) theCurrentUserHasPrivilegeOnTable(privilege string, tableName string) error {
+	if scenario.conn == nil {
+		return fmt.Errorf("no active database connection")
+	}
+
+	var hasPrivilege bool
+	// tableName kann hier direkt als "public.users" übergeben werden
+	query := `SELECT has_table_privilege(current_user, $1, $2)`
+
+	err := scenario.conn.QueryRow(context.Background(), query, tableName, privilege).Scan(&hasPrivilege)
+	if err != nil {
+		return fmt.Errorf("failed to check %s privilege on %q: %w", privilege, tableName, err)
+	}
+	if !hasPrivilege {
+		return fmt.Errorf("expected current user to have %s on %q", privilege, tableName)
 	}
 
 	return nil
