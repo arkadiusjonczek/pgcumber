@@ -33,7 +33,7 @@ and test it against your PostgreSQL database using `pgcumber`:
 pgcumber features/user/admin.feature
 ```
 
-Take a look at the [available Steps](docs/steps.md) to have better overview over all steps.
+Take a look at the [available Steps](docs/steps.md) and the [Features](docs/features.md) to have a better understanding. 
 
 ## Installation
 
