@@ -9,12 +9,6 @@ import (
 
 type AppOption func(*App)
 
-func WithAutoconnect() AppOption {
-	return func(app *App) {
-		app.autoconnect = true
-	}
-}
-
 func WithHost(host string) AppOption {
 	return func(app *App) {
 		app.host = host
@@ -45,6 +39,18 @@ func WithDatabase(database string) AppOption {
 	}
 }
 
+func WithAutoconnect() AppOption {
+	return func(app *App) {
+		app.autoconnect = true
+	}
+}
+
+func WithColor(color bool) AppOption {
+	return func(app *App) {
+		app.color = color
+	}
+}
+
 func NewApp(featuresPath string, opts ...AppOption) (*App, error) {
 	if featuresPath == "" {
 		return nil, fmt.Errorf("no features path provided")
@@ -71,6 +77,8 @@ type App struct {
 	database string
 
 	autoconnect bool
+
+	color bool
 }
 
 func (app *App) Run() int {
@@ -84,8 +92,9 @@ func (app *App) Run() int {
 	)
 
 	opts := godog.Options{
-		Format: "pretty",
-		Paths:  []string{app.featuresPath},
+		Format:   "pretty",
+		Paths:    []string{app.featuresPath},
+		NoColors: true,
 	}
 
 	testsuite := godog.TestSuite{
