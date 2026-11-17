@@ -33,7 +33,7 @@ and test it against your PostgreSQL database using `pgcumber`:
 pgcumber features/user/admin.feature
 ```
 
-![pgcumper.png](pgcumber.png)
+![pgcumber shell](pgcumber-shell.png)
 
 Also take a look at the [available Steps](docs/steps.md) and the [Features](docs/features.md) to have a better understanding. 
 
