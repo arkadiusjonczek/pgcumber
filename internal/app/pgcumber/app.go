@@ -93,6 +93,7 @@ func (app *App) Run() int {
 
 	opts := godog.Options{
 		Format:   "pretty",
+		Output:   NewCleanPrettyWriter(),
 		Paths:    []string{app.featuresPath},
 		NoColors: true,
 	}
