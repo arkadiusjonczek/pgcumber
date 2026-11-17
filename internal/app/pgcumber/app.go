@@ -2,10 +2,6 @@ package pgcumber
 
 import (
 	"fmt"
-	"io"
-	"os"
-	"regexp"
-	"strings"
 
 	"github.com/arkadiusjonczek/pgcumber/internal/pkg/postgresql"
 	"github.com/cucumber/godog"
@@ -97,7 +93,7 @@ func (app *App) Run() int {
 
 	opts := godog.Options{
 		Format:   "pretty",
-		Output:   &cleanPrettyWriter{out: os.Stdout},
+		Output:   NewCleanPrettyWriter(),
 		Paths:    []string{app.featuresPath},
 		NoColors: true,
 	}
@@ -112,21 +108,4 @@ func (app *App) Run() int {
 	status := testsuite.Run()
 
 	return status
-}
-
-type cleanPrettyWriter struct {
-	out io.Writer
-}
-
-// Regex findet ANSI-Codes + "# pfad/zur/datei.feature:12" am Zeilenende
-var locationRegex = regexp.MustCompile(`(\x1b\[[0-9;]*m)?\s+#\s+[^\s]+:\d+(\x1b\[[0-9;]*m)?`)
-
-func (w *cleanPrettyWriter) Write(p []byte) (int, error) {
-	cleaned := locationRegex.ReplaceAllString(string(p), "")
-	// Optional: Falls auch leere Zeilen oder bestimmte Debug-Prefixes weg sollen:
-	cleaned = strings.ReplaceAll(cleaned, "  # ", "")
-	
-	_, err := w.out.Write([]byte(cleaned))
-	// Wichtig: Die ursprüngliche Byte-Länge zurückgeben, sonst meldet Godog einen Short-Write-Fehler
-	return len(p), err
 }
