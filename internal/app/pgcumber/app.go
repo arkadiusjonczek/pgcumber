@@ -3,6 +3,7 @@ package pgcumber
 import (
 	"fmt"
 
+	"github.com/arkadiusjonczek/pgcumber/internal/pkg/cucumber"
 	"github.com/arkadiusjonczek/pgcumber/internal/pkg/postgresql"
 	"github.com/cucumber/godog"
 )
@@ -91,9 +92,11 @@ func (app *App) Run() int {
 		app.database,
 	)
 
+	godog.Format("prettyicon", "Pretty output with status icons", cucumber.NewPrettyIconFormatter)
+
 	opts := godog.Options{
-		Format:   "pretty",
-		Output:   NewCleanPrettyWriter(),
+		Format:   "prettyicon",
+		Output:   cucumber.NewCleanPrettyWriter(),
 		Paths:    []string{app.featuresPath},
 		NoColors: true,
 	}

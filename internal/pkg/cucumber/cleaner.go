@@ -1,4 +1,4 @@
-package pgcumber
+package cucumber
 
 import (
 	"bytes"
