@@ -35,13 +35,13 @@ pgcumber features/user/admin.feature
 
 ![pgcumper.png](pgcumber.png)
 
-Take a look at the [available Steps](docs/steps.md) and the [Features](docs/features.md) to have a better understanding. 
+Also take a look at the [available Steps](docs/steps.md) and the [Features](docs/features.md) to have a better understanding. 
 
 ## Installation
 
 Use [homebrew](https://brew.sh/) to install `pgcumber` on macOS or Linux.
 
-Or just download the binary from the [releases](https://github.com/arkadiusjonczek/pgcumber/releases) page for your operating system and architecture.
+Or just download the binary for your operating system from the [releases](https://github.com/arkadiusjonczek/pgcumber/releases) page.
 
 ### Homebrew
 
