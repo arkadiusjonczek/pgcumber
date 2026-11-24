@@ -265,6 +265,26 @@ func (scenario *Scenario) theCurrentUserHasPrivilegeOnSchema(privilege string, s
 	return nil
 }
 
+func (scenario *Scenario) theCurrentUserHasNotPrivilegeOnSchema(privilege string, schemaName string) error {
+	if scenario.conn == nil {
+		return fmt.Errorf("no active database connection")
+	}
+
+	var hasPrivilege bool
+	query := `SELECT has_schema_privilege(current_user, $1, $2)`
+
+	err := scenario.conn.QueryRow(context.Background(), query, schemaName, privilege).Scan(&hasPrivilege)
+	if err != nil {
+		return fmt.Errorf("failed to check %s privilege for current user on schema %q: %w", privilege, schemaName, err)
+	}
+
+	if hasPrivilege {
+		return fmt.Errorf("expected current user to have not %s privilege on schema %q, but they do not", privilege, schemaName)
+	}
+
+	return nil
+}
+
 func (scenario *Scenario) theUserHasPrivilegeOnSchema(user string, privilege string, schemaName string) error {
 	if scenario.conn == nil {
 		return fmt.Errorf("no active database connection")
@@ -312,6 +332,33 @@ func (scenario *Scenario) theTableExistsInSchema(tableName string, schemaName st
 	return nil
 }
 
+func (scenario *Scenario) theTableNotExistsInSchema(tableName string, schemaName string) error {
+	if scenario.conn == nil {
+		return fmt.Errorf("no active database connection")
+	}
+
+	var exists bool
+	query := `
+		SELECT EXISTS (
+			SELECT 1 
+			FROM information_schema.tables 
+			WHERE table_schema = $1 
+			  AND table_name = $2
+			  AND table_type = 'BASE TABLE'
+		)`
+
+	err := scenario.conn.QueryRow(context.Background(), query, schemaName, tableName).Scan(&exists)
+	if err != nil {
+		return fmt.Errorf("failed to check if table %q.%q exists: %w", schemaName, tableName, err)
+	}
+
+	if exists {
+		return fmt.Errorf("expected table %q to not exist in schema %q, but it does not", tableName, schemaName)
+	}
+
+	return nil
+}
+
 func (scenario *Scenario) theCurrentUserHasPrivilegeOnTable(privilege string, tableName string) error {
 	if scenario.conn == nil {
 		return fmt.Errorf("no active database connection")
@@ -326,7 +373,47 @@ func (scenario *Scenario) theCurrentUserHasPrivilegeOnTable(privilege string, ta
 		return fmt.Errorf("failed to check %s privilege on %q: %w", privilege, tableName, err)
 	}
 	if !hasPrivilege {
-		return fmt.Errorf("expected current user to have %s on %q", privilege, tableName)
+		return fmt.Errorf("expected current user to have privilege %s on %q", privilege, tableName)
+	}
+
+	return nil
+}
+
+func (scenario *Scenario) theCurrentUserHasNotPrivilegeOnTable(privilege string, tableName string) error {
+	if scenario.conn == nil {
+		return fmt.Errorf("no active database connection")
+	}
+
+	var hasPrivilege bool
+	// tableName kann hier direkt als "public.users" übergeben werden
+	query := `SELECT has_table_privilege(current_user, $1, $2)`
+
+	err := scenario.conn.QueryRow(context.Background(), query, tableName, privilege).Scan(&hasPrivilege)
+	if err != nil {
+		return fmt.Errorf("failed to check %s privilege on %q: %w", privilege, tableName, err)
+	}
+	if hasPrivilege {
+		return fmt.Errorf("expected current user not to have privilege %s on %q", privilege, tableName)
+	}
+
+	return nil
+}
+
+func (scenario *Scenario) theUserHasPrivilegeOnTable(user string, privilege string, tableName string) error {
+	if scenario.conn == nil {
+		return fmt.Errorf("no active database connection")
+	}
+
+	var hasPrivilege bool
+	// tableName kann hier direkt als "public.users" übergeben werden
+	query := `SELECT has_table_privilege($1, $2, $3)`
+
+	err := scenario.conn.QueryRow(context.Background(), query, user, tableName, privilege).Scan(&hasPrivilege)
+	if err != nil {
+		return fmt.Errorf("failed to check %s privilege for %s on %q: %w", privilege, user, tableName, err)
+	}
+	if !hasPrivilege {
+		return fmt.Errorf("expected user %s to have %s on %q", user, privilege, tableName)
 	}
 
 	return nil
