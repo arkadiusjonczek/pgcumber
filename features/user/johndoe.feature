@@ -12,3 +12,9 @@ Feature: PostgreSQL johndoe user permissions
 
     Then  the connection is successful
     And   I am not a database superuser
+
+    Then  the schema "public" exists
+    And   I have "USAGE" privilege on schema "public"
+    And   I have not "CREATE" privilege on schema "public"
+
+    Then  the table "user" not exists in schema "public"

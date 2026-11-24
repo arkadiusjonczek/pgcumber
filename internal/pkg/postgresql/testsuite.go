@@ -94,12 +94,18 @@ func (suite *Testsuite) InitializeScenario(sc *godog.ScenarioContext) {
 	sc.Then(`^the schema "([^"]*)" exists$`, scenario.theSchemaExists)
 	sc.Then(`^the schema "([^"]*)" does not exist$`, scenario.theSchemaNotExists)
 
+	sc.Then(`^I have "([^"]*)" privilege on schema "([^"]*)"$`, scenario.theCurrentUserHasPrivilegeOnSchema)
+	sc.Then(`^I have not "([^"]*)" privilege on schema "([^"]*)"$`, scenario.theCurrentUserHasNotPrivilegeOnSchema)
 	sc.Then(`^the current user has "([^"]*)" privilege on schema "([^"]*)"$`, scenario.theCurrentUserHasPrivilegeOnSchema)
 	sc.Then(`^the user "([^"]*)" has "([^"]*)" privilege on schema "([^"]*)"$`, scenario.theUserHasPrivilegeOnSchema)
 
 	sc.Then(`^the table "([^"]*)" exists in schema "([^"]*)"$`, scenario.theTableExistsInSchema)
+	sc.Then(`^the table "([^"]*)" not exists in schema "([^"]*)"$`, scenario.theTableNotExistsInSchema)
 
+	sc.Then(`^I have "([^"]*)" privilege on table "([^"]*)"$`, scenario.theCurrentUserHasPrivilegeOnTable)
+	sc.Then(`^I have not "([^"]*)" privilege on table "([^"]*)"$`, scenario.theCurrentUserHasNotPrivilegeOnTable)
 	sc.Then(`^the current user has "([^"]*)" privilege on table "([^"]*)"$`, scenario.theCurrentUserHasPrivilegeOnTable)
+	sc.Then(`^the user "([^"]*)" has "([^"]*)" privilege on table "([^"]*)"$`, scenario.theUserHasPrivilegeOnTable)
 
 	sc.After(func(ctx context.Context, _ *godog.Scenario, err error) (context.Context, error) {
 		if scenario.conn != nil {
